@@ -2,11 +2,12 @@ package com.nibm.UserServince.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nibm.UserServince.SpringApplicationContext;
-import com.nibm.UserServince.service.UserService;
+import com.nibm.UserServince.new_.JWT.security.token.creator.TokenCreator;
+import com.nibm.UserServince.service.impl.UserServiceImpl;
 import com.nibm.UserServince.shared.dto.UserDto;
 import com.nibm.UserServince.ui.model.request.UserLoginRequestModel;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jwt.SignedJWT;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,16 +17,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.time.Instant;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Date;
+
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+
 
     public AuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -55,22 +55,45 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
             Authentication auth) throws IOException, ServletException {
  
-		byte[] secretKeyBytes = SecurityConstants.getTokenSecret().getBytes();
-		SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
-        Instant now = Instant.now();
+//		byte[] secretKeyBytes = SecurityConstants.getTokenSecret().getBytes();
+//		SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
+//        Instant now = Instant.now();
+//
+//        String userName = ((UserPrincipal) auth.getPrincipal()).getUsername();
+//        UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
+//        UserDto userDto = userService.getUser(userName);
+//
+//        String token = Jwts.builder()
+//                .subject(userName)
+//                .expiration(Date.from(now.plusMillis(SecurityConstants.EXPIRATION_TIME)))
+//                .issuedAt(Date.from(now))
+//                .signWith(secretKey)
+//                .compact();
+//
+//        res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
+//        res.addHeader("UserID", userDto.getUserId());
 
         String userName = ((UserPrincipal) auth.getPrincipal()).getUsername();
-        UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
-        UserDto userDto = userService.getUser(userName);
-      
-        String token = Jwts.builder()
-                .subject(userName)
-                .expiration(Date.from(now.plusMillis(SecurityConstants.EXPIRATION_TIME)))
-                .issuedAt(Date.from(now))
-                .signWith(secretKey)   
-                .compact();
+        TokenCreator tokenCreator = (TokenCreator) SpringApplicationContext.getBean("tokenCreator");
 
-        res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
+        SignedJWT signedJWT = null;
+        try {
+            signedJWT = tokenCreator.createSignedJWT(auth);
+        } catch (NoSuchAlgorithmException | JOSEException e) {
+            throw new RuntimeException(e);
+        }
+
+        String encryptToken = null;
+        try {
+            encryptToken = tokenCreator.encryptToken(signedJWT);
+        } catch (JOSEException e) {
+            throw new RuntimeException(e);
+        }
+
+        UserServiceImpl userService = (UserServiceImpl) SpringApplicationContext.getBean("userServiceImpl");
+        UserDto userDto = userService.getUser(userName);
+
+        res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + encryptToken);
         res.addHeader("UserID", userDto.getUserId());
 
     }
