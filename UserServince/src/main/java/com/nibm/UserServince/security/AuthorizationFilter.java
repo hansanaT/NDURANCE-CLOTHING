@@ -1,10 +1,9 @@
 package com.nibm.UserServince.security;
 
+import com.nibm.UserServince.SpringApplicationContext;
 import com.nibm.UserServince.io.repository.UserRepository;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import com.nibm.UserServince.new_.JWT.security.token.converter.TokenConverter;
+import com.nimbusds.jose.JOSEException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,9 +12,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-
-import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {
@@ -39,12 +37,49 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
             return;
         }
 
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+        UsernamePasswordAuthenticationToken authentication = null;
+        try {
+            authentication = getAuthentication(req);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        } catch (JOSEException e) {
+            throw new RuntimeException(e);
+        }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+//    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+//
+//        String authorizationHeader = request.getHeader(SecurityConstants.HEADER_STRING);
+//
+//        if (authorizationHeader == null) {
+//            return null;
+//        }
+//
+//        String token = authorizationHeader.replace(SecurityConstants.TOKEN_PREFIX, "");
+//
+//        byte[] secretKeyBytes = SecurityConstants.getTokenSecret().getBytes();
+//        SecretKey key = Keys.hmacShaKeyFor(secretKeyBytes);
+//
+//        JwtParser parser = Jwts.parser()
+//                .verifyWith(key)
+//                .build();
+//
+//        Claims claims = parser.parseSignedClaims(token).getPayload();
+//        String subject = (String) claims.get("sub");
+//
+//        System.out.println(subject);
+//
+//        if (subject == null) {
+//            return null;
+//        }
+//
+//        return new UsernamePasswordAuthenticationToken(subject, null, new ArrayList<>());
+//
+//    }
+
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) throws ParseException, JOSEException {
 
         String authorizationHeader = request.getHeader(SecurityConstants.HEADER_STRING);
 
@@ -52,23 +87,17 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
             return null;
         }
 
-        String token = authorizationHeader.replace(SecurityConstants.TOKEN_PREFIX, "");
+        String signedToken = authorizationHeader.replace(SecurityConstants.TOKEN_PREFIX, "");
+        TokenConverter tokenConverter = (TokenConverter) SpringApplicationContext.getBean("tokenConverter");
+        String token = tokenConverter.decryptToken(signedToken);
+        String email = tokenConverter.validateTokenSignature(token, request);
 
-        byte[] secretKeyBytes = SecurityConstants.getTokenSecret().getBytes();
-        SecretKey key = Keys.hmacShaKeyFor(secretKeyBytes);
- 
-        JwtParser parser = Jwts.parser()
-                .verifyWith(key)
-                .build();
+        if(email != null){
+            return new UsernamePasswordAuthenticationToken(email, null, new ArrayList<>());
 
-        Claims claims = parser.parseSignedClaims(token).getPayload();
-        String subject = (String) claims.get("sub");
-
-        if (subject == null) {
+        }else {
             return null;
         }
-
-        return new UsernamePasswordAuthenticationToken(subject, null, new ArrayList<>());
 
     }
 

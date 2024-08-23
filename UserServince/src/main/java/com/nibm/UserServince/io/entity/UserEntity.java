@@ -1,6 +1,7 @@
 package com.nibm.UserServince.io.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 
 import java.io.Serializable;
 import java.util.Collection;
