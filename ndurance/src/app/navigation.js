@@ -8,7 +8,7 @@ import { Button, Avatar,
     NavbarCollapse,
     NavbarToggle, } from "flowbite-react";
 
-export default function Nav() {
+export default function Navigation() {
     return (
         <Navbar fluid>
             <NavbarBrand href="http://localhost:3000/">
@@ -22,6 +22,10 @@ export default function Nav() {
                             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1"
                                   d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7H7.312"/>
                         </svg>
+                        <div
+                            className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white
+                            bg-[#155e75] border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">3
+                        </div>
                     </Button>
                 </div>
                 <div>
