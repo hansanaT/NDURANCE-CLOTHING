@@ -4,6 +4,7 @@ import com.nibm.UserServince.exceptions.UserServiceException;
 import com.nibm.UserServince.io.entity.PasswordResetTokenEntity;
 import com.nibm.UserServince.io.entity.RoleEntity;
 import com.nibm.UserServince.io.entity.UserEntity;
+import com.nibm.UserServince.io.repository.AuthorityRepository;
 import com.nibm.UserServince.io.repository.PasswordResetTokenRepository;
 import com.nibm.UserServince.io.repository.RoleRepository;
 import com.nibm.UserServince.io.repository.UserRepository;
@@ -25,7 +26,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -51,7 +51,12 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	RoleRepository roleRepository;
- 
+
+	@Autowired
+	AuthorityRepository authorityRepo;
+	private ModelMapper modelMapper = new ModelMapper();
+
+
 	@Override
 	public UserDto createUser(UserDto user) {
 
@@ -65,9 +70,8 @@ public class UserServiceImpl implements UserService {
 			address.setAddressId(utils.generateAddressId(30));
 			user.getAddresses().set(i, address);
 		}
-		  
+
 		//BeanUtils.copyProperties(user, userEntity);
-		ModelMapper modelMapper = new ModelMapper();
 		UserEntity userEntity = modelMapper.map(user, UserEntity.class);
 
 		String publicUserId = utils.generateUserId(30);
@@ -105,8 +109,9 @@ public class UserServiceImpl implements UserService {
 			throw new UsernameNotFoundException(email);
 
 		UserDto returnValue = new UserDto();
+
 		BeanUtils.copyProperties(userEntity, returnValue);
- 
+
 		return returnValue;
 	}
 

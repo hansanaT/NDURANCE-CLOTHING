@@ -49,36 +49,6 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
         chain.doFilter(req, res);
     }
 
-//    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-//
-//        String authorizationHeader = request.getHeader(SecurityConstants.HEADER_STRING);
-//
-//        if (authorizationHeader == null) {
-//            return null;
-//        }
-//
-//        String token = authorizationHeader.replace(SecurityConstants.TOKEN_PREFIX, "");
-//
-//        byte[] secretKeyBytes = SecurityConstants.getTokenSecret().getBytes();
-//        SecretKey key = Keys.hmacShaKeyFor(secretKeyBytes);
-//
-//        JwtParser parser = Jwts.parser()
-//                .verifyWith(key)
-//                .build();
-//
-//        Claims claims = parser.parseSignedClaims(token).getPayload();
-//        String subject = (String) claims.get("sub");
-//
-//        System.out.println(subject);
-//
-//        if (subject == null) {
-//            return null;
-//        }
-//
-//        return new UsernamePasswordAuthenticationToken(subject, null, new ArrayList<>());
-//
-//    }
-
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) throws ParseException, JOSEException {
 
         String authorizationHeader = request.getHeader(SecurityConstants.HEADER_STRING);

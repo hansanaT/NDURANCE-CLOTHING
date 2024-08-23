@@ -1,6 +1,5 @@
-package com.nibm.UserServince.ui.model.response;
+package com.nibm.ProductService.ui.model;
 
-import java.util.Collection;
 import java.util.List;
 
 public class UserRest {
