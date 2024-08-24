@@ -22,6 +22,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
@@ -64,6 +65,15 @@ public class TokenCreator {
     }
 
     private JWTClaimsSet createJWTClaimSet(Authentication auth, UserPrincipal applicationUser) {
+
+            return new JWTClaimsSet.Builder().subject(applicationUser.getUsername())
+                    .claim("authorities",
+                        auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(toList()))
+                .issuer("Manura Sanjula").issueTime(new Date())
+                .expirationTime(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME)).build();
+    }
+
+    private JWTClaimsSet createJWTClaimSet(Authentication auth, UserPrincipal applicationUser, List<String> roles) {
 
         return new JWTClaimsSet.Builder().subject(applicationUser.getUsername())
                 .claim("authorities",

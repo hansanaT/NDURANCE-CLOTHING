@@ -54,24 +54,6 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
             Authentication auth) throws IOException, ServletException {
- 
-//		byte[] secretKeyBytes = SecurityConstants.getTokenSecret().getBytes();
-//		SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
-//        Instant now = Instant.now();
-//
-//        String userName = ((UserPrincipal) auth.getPrincipal()).getUsername();
-//        UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
-//        UserDto userDto = userService.getUser(userName);
-//
-//        String token = Jwts.builder()
-//                .subject(userName)
-//                .expiration(Date.from(now.plusMillis(SecurityConstants.EXPIRATION_TIME)))
-//                .issuedAt(Date.from(now))
-//                .signWith(secretKey)
-//                .compact();
-//
-//        res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
-//        res.addHeader("UserID", userDto.getUserId());
 
         String userName = ((UserPrincipal) auth.getPrincipal()).getUsername();
         TokenCreator tokenCreator = (TokenCreator) SpringApplicationContext.getBean("tokenCreator");

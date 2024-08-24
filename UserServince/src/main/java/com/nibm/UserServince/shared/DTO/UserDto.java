@@ -18,7 +18,16 @@ public class UserDto implements Serializable{
     private Boolean emailVerificationStatus = false;
     private List<AddressDTO> addresses;
     private Collection<String> roles;
-    
+	private Collection<String> Authorities;
+
+	public Collection<String> getAuthorities() {
+		return Authorities;
+	}
+
+	public void setAuthorities(Collection<String> authorities) {
+		Authorities = authorities;
+	}
+
 	public long getId() {
 		return id;
 	}
