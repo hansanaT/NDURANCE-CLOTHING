@@ -8,7 +8,7 @@
 		<version>3.3.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.nibm</groupId>
+	<groupId>com.ndurance</groupId>
 	<artifactId>ProductService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ProductService</name>
