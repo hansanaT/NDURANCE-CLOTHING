@@ -1,5 +1,5 @@
 import Navigation from "@/app/navigation";
-import SHOP_DATA from "../../../../shopData";
+import SHOP_DATA from "@/shopData";
 
 export default function ({params}) {
     const name = params.name.charAt(0).toUpperCase() + params.name.slice(1);
