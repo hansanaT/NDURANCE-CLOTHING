@@ -3,7 +3,7 @@
 import Navigation from "../navigation";
 import {useRouter} from "next/navigation";
 
-export default function Home() {
+export default function CategoryHome() {
 
     const router = useRouter();
     const navigateToWomens = () => {
