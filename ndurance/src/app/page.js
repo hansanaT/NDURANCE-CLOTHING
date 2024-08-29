@@ -1,12 +1,8 @@
 import Navigation from "./navigation";
 import './globals.css';
-import {Button} from "flowbite-react";
+import {Button, HR, TextInput} from "flowbite-react";
 import SHOP_DATA from "@/shopData";
-
-export const metadata = {
-    title: "NDURANCE Clothing | Home",
-    description: "Attire on the cutting edge of fashion.",
-};
+import {Ftr} from "@/app/footer";
 
 export default function Home() {
 
@@ -61,6 +57,59 @@ export default function Home() {
                     ))}
                 </div>
             </div>
+            <div className="items-center justify-center flex mt-10 mb-10 space-x-4">
+                <div>
+                    <h2 className="text-4xl font-bold">New Arrivals</h2>
+                    <p className="text-2xl break-normal">Discover the latest trends in fashion <br/>and elevate your
+                        style with our
+                        collection of new arrivals.</p>
+                </div>
+                <div>
+                    <img src="https://i.ibb.co/7CQVJNm/blue-tank.png" alt="New Arrivals" className="rounded-box"/>
+                </div>
+            </div>
+            <div className="items-center justify-center flex mt-10 mb-10 space-x-4">
+                <div>
+                    <h2 className="text-4xl font-bold">RUN!</h2>
+                    <p className="text-2xl break-normal">Discover the latest trends in footwear <br/>and elevate your
+                        style with our
+                        collection of new arrivals.</p>
+                </div>
+                <div>
+                    <img src="https://i.ibb.co/1RcFPk0/white-nike-high-tops.png" alt="Footwear"
+                         className="rounded-box"/>
+                </div>
+            </div>
+            <div className="items-center justify-center flex mt-10 mb-10 space-x-4">
+                <div>
+                    <h2 className="text-4xl font-bold">Summer's Here</h2>
+                    <p className="text-2xl break-normal">Discover the latest trends on Hats <br/>and elevate your
+                        style with our
+                        collection of new arrivals.</p>
+                </div>
+                <div>
+                    <img src="https://i.ibb.co/QdJwgmp/brown-cowboy.png" alt="Hats"
+                         className="rounded-box"/>
+                </div>
+            </div>
+            <div className="items-center justify-center text-center border rounded-lg bg-blue-500 mx-32 my-5">
+                <h1 className="text-6xl text-white font-bold py-5">Sign Up to Our Newsletter</h1>
+                <p className="break-normal text-2xl text-white">Get the latest updates on new arrivals,exclusive offers, and
+                    more.</p>
+                <div className="flex items-center justify-center pt-6">
+                    <TextInput
+                        id="email3"
+                        type="email"
+                        placeholder="name@example.com"
+                        required
+                    />
+                </div>
+                <div className="flex items-center justify-center my-6">
+                    <Button>Sign Up</Button>
+                </div>
+            </div>
+            <HR.Trimmed/>
+            <Ftr/>
         </div>
     );
 }

@@ -3,10 +3,10 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// export const metadata = {
-//   title: "NDURANCE Clothing",
-//   description: "Attire on the cutting edge of fashion.",
-// };
+export const metadata = {
+  title: "NDURANCE Clothing",
+  description: "Attire on the cutting edge of fashion.",
+};
 
 export default function RootLayout({ children }) {
   return (
