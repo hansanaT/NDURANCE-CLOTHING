@@ -6,9 +6,7 @@ import { Button, Avatar,
     DropdownHeader,
     DropdownItem,
     Navbar,
-    NavbarBrand,
-    NavbarCollapse,
-    NavbarToggle, } from "flowbite-react";
+    NavbarBrand, } from "flowbite-react";
 
     export default function Navigation({cartCount}) {
     return (

@@ -56,7 +56,11 @@ module.exports = {
       ]
     }
   },
+  daisyui: {
+    themes:[],
+  },
   plugins: [
       flowbite.plugin(),
+      require('daisyui'),
   ],
 };
