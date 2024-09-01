@@ -14,7 +14,7 @@ import { Button, Avatar,
     export default function Navigation({cartCount}) {
     return (
         <Navbar fluid className="bg-transparent">
-            <NavbarBrand href="http://localhost:3000/">
+            <NavbarBrand href="https://localhost:3000/">
                 <img src="/next.svg" className="mr-3 h-6 sm:h-9" alt="Flowbite React Logo"/>
             </NavbarBrand>
             <div className="flex md:items-end sm:items-center gap-3 py-2 md:order-2">
@@ -36,7 +36,7 @@ import { Button, Avatar,
                     </Button>
                 </div>
                 <div>
-                    <Button className="hidden sm:block md:block lg:block xl:block 2xl:block">Checkout</Button>
+                    <Button className="hidden sm:block md:block lg:block xl:block 2xl:block">Sign In</Button>
                 </div>
                 <div>
                     <Dropdown
@@ -44,8 +44,8 @@ import { Button, Avatar,
                         inline
                         label={
                             <Avatar alt="User settings"
-                                    img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                                    rounded/>
+                                    img="https://flowbite.com/docs/images/people/profile-picture-4.jpg"
+                                    rounded className="hidden"/>
                         }
                     >
                         <DropdownHeader>
