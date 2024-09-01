@@ -8,8 +8,6 @@ public class AddressesRest extends RepresentationModel<AddressesRest> {
 	private String country;
 	private String streetName;
 	private String postalCode;
-	private String type;
-
 	public String getAddressId() {
 		return addressId;
 	}
@@ -48,13 +46,5 @@ public class AddressesRest extends RepresentationModel<AddressesRest> {
 
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 }

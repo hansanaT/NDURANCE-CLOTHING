@@ -27,10 +27,7 @@ public class AddressEntity implements Serializable {
 	
 	@Column(length=7, nullable=false)
 	private String postalCode;
-	
-	@Column(length=10, nullable=false)
-	private String type;
-	
+
 	@ManyToOne
 	@JoinColumn(name="users_id")
 	private UserEntity userDetails;
@@ -81,14 +78,6 @@ public class AddressEntity implements Serializable {
 
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public UserEntity getUserDetails() {

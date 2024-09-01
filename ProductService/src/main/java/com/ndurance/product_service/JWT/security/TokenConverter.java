@@ -1,7 +1,7 @@
 package com.ndurance.product_service.JWT.security;
 
 import com.ndurance.product_service.feign_client.UserClient;
-import com.ndurance.product_service.model.UserRest;
+import com.ndurance.product_service.feign_client.model.UserRest;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.crypto.DirectDecrypter;

@@ -8,10 +8,10 @@ import com.ndurance.product_service.shared.dto.CommentDTO;
 import com.ndurance.product_service.shared.model.request.ClothRequestModel;
 import com.ndurance.product_service.shared.model.request.CommentRequestModel;
 import com.ndurance.product_service.shared.model.response.ErrorMessages;
-import com.ndurance.product_service.entity.ClothEntity;
-import com.ndurance.product_service.repository.ClothRepository;
+import com.ndurance.product_service.entity.ProductEntity;
+import com.ndurance.product_service.repository.ProductRepository;
 import com.ndurance.product_service.service.ProductService;
-import com.ndurance.product_service.shared.dto.ClothDTO;
+import com.ndurance.product_service.shared.dto.ProductDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -31,7 +31,7 @@ import java.util.Objects;
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
-    private ClothRepository clothRepository;
+    private ProductRepository productRepository;
 
     @Autowired
     private CommentRepository commentRepository;
@@ -44,23 +44,23 @@ public class ProductServiceImpl implements ProductService {
     private final Path fileStorageLocation = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize();
 
     @Override
-    public ClothDTO getCloth(String publicId) {
-        ClothEntity clothEntity = clothRepository.findByPublicId(publicId);
-        if(clothEntity == null)
+    public ProductDTO getCloth(String productId) {
+        ProductEntity productEntity = productRepository.findByProductId(productId);
+        if(productEntity == null)
             throw new ProductNotFoundServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
-        return modelMapper.map(clothEntity, ClothDTO.class);
+        return modelMapper.map(productEntity, ProductDTO.class);
     }
 
     @Override
-    public List<ClothDTO> getCloths() {
+    public List<ProductDTO> getCloths() {
 
-        List<ClothDTO> clothDTOS = new ArrayList<>();
+        List<ProductDTO> productDTOS = new ArrayList<>();
 
-        clothRepository.findAll().forEach(cloth -> {
-            ClothDTO clothDTO = modelMapper.map(cloth, ClothDTO.class);
-            clothDTOS.add(clothDTO);
+        productRepository.findAll().forEach(cloth -> {
+            ProductDTO productDTO = modelMapper.map(cloth, ProductDTO.class);
+            productDTOS.add(productDTO);
         });
-        return clothDTOS;
+        return productDTOS;
     }
 
     @Override
@@ -75,8 +75,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<CommentDTO> getComments(String clothPublicId) {
-        ClothEntity cloth = clothRepository.findByPublicId(clothPublicId);
+    public List<CommentDTO> getComments(String productId) {
+        ProductEntity cloth = productRepository.findByProductId(productId);
 
         if(cloth == null)
             throw new ProductNotFoundServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
@@ -97,7 +97,7 @@ public class ProductServiceImpl implements ProductService {
         comment.setUserPublicId(requestModel.getUserPublicId());
         comment.setComment(requestModel.getComment());
 
-        ClothEntity cloth = clothRepository.findByPublicId(requestModel.getClothPublicId());
+        ProductEntity cloth = productRepository.findByProductId(requestModel.getClothPublicId());
         if(cloth == null)
             throw new ProductNotFoundServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 
@@ -113,22 +113,22 @@ public class ProductServiceImpl implements ProductService {
             comments.add(comment);
         }
         cloth.setComments(comments);
-        clothRepository.save(cloth);
+        productRepository.save(cloth);
     }
 
     @Override
-    public ClothDTO insertCloth(ClothRequestModel clothRequestModel) {
-        ClothEntity cloth = modelMapper.map(clothRequestModel, ClothEntity.class);
-        ClothEntity saved = clothRepository.save(cloth);
-        return modelMapper.map(saved, ClothDTO.class);
+    public ProductDTO insertCloth(ClothRequestModel clothRequestModel) {
+        ProductEntity cloth = modelMapper.map(clothRequestModel, ProductEntity.class);
+        ProductEntity saved = productRepository.save(cloth);
+        return modelMapper.map(saved, ProductDTO.class);
     }
 
     @Override
     public void saveCloth(ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception {
         List<String> images = new ArrayList<>();
 
-        ClothEntity cloth = modelMapper.map(clothRequestModel, ClothEntity.class);
-        cloth.setPublicId(utils.generateAddressId(20));
+        ProductEntity cloth = modelMapper.map(clothRequestModel, ProductEntity.class);
+        cloth.setProductId(utils.generateAddressId(20));
 
         cloth.setComments(List.of());
 
@@ -153,13 +153,13 @@ public class ProductServiceImpl implements ProductService {
 
 
             cloth.setImages(images);
-            ClothEntity clothEntity = clothRepository.save(cloth);
         }
+        ProductEntity productEntity = productRepository.save(cloth);
     }
 
     @Override
-    public void saveCloth(String publicId, ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception {
-        ClothEntity existingCloth = clothRepository.findByPublicId(publicId);
+    public void saveCloth(String productId, ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception {
+        ProductEntity existingCloth = productRepository.findByProductId(productId);
         if (existingCloth != null) {
 
             List<String> oldImages = existingCloth.getImages();
@@ -196,10 +196,9 @@ public class ProductServiceImpl implements ProductService {
 
 
                     existingCloth.setImages(newImages);
-                    ClothEntity clothEntity = clothRepository.save(existingCloth);
+                    ProductEntity productEntity = productRepository.save(existingCloth);
                 }else{
-                    existingCloth.setImages(newImages);
-                    ClothEntity clothEntity = clothRepository.save(existingCloth);
+                    ProductEntity productEntity = productRepository.save(existingCloth);
                 }
             }
         } else {
@@ -208,10 +207,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteCloth(String publicId) throws Exception {
-        ClothEntity existingCloth = clothRepository.findByPublicId(publicId);
+    public void deleteCloth(String productId) throws Exception {
+        ProductEntity existingCloth = productRepository.findByProductId(productId);
         if(existingCloth != null)
-            clothRepository.delete(existingCloth);
+            productRepository.delete(existingCloth);
         else
             throw new ProductNotFoundServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
     }

@@ -26,10 +26,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -54,11 +57,51 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
     AuthorityRepository authorityRepo;
-	private ModelMapper modelMapper = new ModelMapper();
+	private final ModelMapper modelMapper = new ModelMapper();
 
+	private static final String UPLOAD_DIR = System.getProperty("user.home") + "/uploads/";
 
 	@Override
 	public UserDto createUser(UserDto user) {
+		if (userRepository.findByEmail(user.getEmail()) != null)
+			throw new UserServiceException("Record already exists");
+
+		for(int i=0;i<user.getAddresses().size();i++)
+		{
+			AddressDTO address = user.getAddresses().get(i);
+			address.setUserDetails(user);
+			address.setAddressId(utils.generateAddressId(30));
+			user.getAddresses().set(i, address);
+		}
+
+		//BeanUtils.copyProperties(user, userEntity);
+		UserEntity userEntity = modelMapper.map(user, UserEntity.class);
+
+		String publicUserId = utils.generateUserId(30);
+		userEntity.setUserId(publicUserId);
+		userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+		userEntity.setEmailVerificationToken(utils.generateEmailVerificationToken(publicUserId));
+
+		Collection<RoleEntity> roleEntities = new HashSet<>();
+		for(String role: user.getRoles()) {
+			RoleEntity roleEntity = roleRepository.findByName(role);
+			if(roleEntity !=null) {
+				roleEntities.add(roleEntity);
+			}
+		}
+
+		userEntity.setRoles(roleEntities);
+		UserEntity storedUserDetails = userRepository.save(userEntity);
+		UserDto returnValue  = modelMapper.map(storedUserDetails, UserDto.class);
+
+		// Send an email message to user to verify their email address
+		//amazonSES.verifyEmail(returnValue);
+
+		return returnValue;
+	}
+
+	@Override
+	public UserDto createUser(UserDto user, MultipartFile file) throws IOException {
 
 		if (userRepository.findByEmail(user.getEmail()) != null)
 			throw new UserServiceException("Record already exists");
@@ -78,6 +121,15 @@ public class UserServiceImpl implements UserService {
 		userEntity.setUserId(publicUserId);
 		userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 		userEntity.setEmailVerificationToken(utils.generateEmailVerificationToken(publicUserId));
+
+		Path uploadPath = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize();
+		Files.createDirectories(uploadPath);
+
+		String fileName = utils.generateUserId(20) + file.getOriginalFilename();
+		userEntity.setProfilePic(fileName);
+
+		Path filePath = uploadPath.resolve(Objects.requireNonNull(fileName));
+		file.transferTo(filePath.toFile());
 		
 		// Set roles 
 		Collection<RoleEntity> roleEntities = new HashSet<>();
@@ -106,11 +158,7 @@ public class UserServiceImpl implements UserService {
 		if (userEntity == null)
 			throw new UsernameNotFoundException(email);
 
-		UserDto returnValue = new UserDto();
-
-		BeanUtils.copyProperties(userEntity, returnValue);
-
-		return returnValue;
+		return modelMapper.map(userEntity, UserDto.class);
 	}
 
 	@Override
@@ -125,15 +173,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto getUserByUserId(String userId) {
-		UserDto returnValue = new UserDto();
 		UserEntity userEntity = userRepository.findByUserId(userId);
 
 		if (userEntity == null)
 			throw new UsernameNotFoundException("User with ID: " + userId + " not found");
 
-		BeanUtils.copyProperties(userEntity, returnValue);
-
-		return returnValue;
+		return modelMapper.map(userEntity, UserDto.class);
 	}
 
 	@Override

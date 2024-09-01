@@ -10,6 +10,16 @@ public class UserDetailsRequestModel {
 	private String email;
 	private String password;
 	private List<AddressRequestModel> addresses = new ArrayList<>();
+
+	private int defaultAddress = 0;
+
+	public int getDefaultAddress() {
+		return defaultAddress;
+	}
+
+	public void setDefaultAddress(int defaultAddress) {
+		this.defaultAddress = defaultAddress;
+	}
 	
 	public String getFirstName() {
 		return firstName;

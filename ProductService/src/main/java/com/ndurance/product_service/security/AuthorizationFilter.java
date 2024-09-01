@@ -2,7 +2,7 @@ package com.ndurance.product_service.security;
 
 import com.ndurance.product_service.SpringApplicationContext;
 import com.ndurance.product_service.JWT.security.TokenConverter;
-import com.ndurance.product_service.model.UserRest;
+import com.ndurance.product_service.feign_client.model.UserRest;
 import com.nimbusds.jose.JOSEException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

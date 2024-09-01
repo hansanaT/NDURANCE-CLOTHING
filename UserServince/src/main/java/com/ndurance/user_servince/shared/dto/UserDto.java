@@ -19,6 +19,15 @@ public class UserDto implements Serializable{
     private List<AddressDTO> addresses;
     private Collection<String> roles;
 	private Collection<String> Authorities;
+	private int defaultAddress;
+
+	public int getDefaultAddress() {
+		return defaultAddress;
+	}
+
+	public void setDefaultAddress(int defaultAddress) {
+		this.defaultAddress = defaultAddress;
+	}
 
 	public Collection<String> getAuthorities() {
 		return Authorities;
