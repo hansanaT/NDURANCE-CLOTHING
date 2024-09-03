@@ -2,6 +2,7 @@ package com.ndurance.user_service.entity;
 
 import jakarta.persistence.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 @Table(name="users")
 public class UserEntity implements Serializable {
  
+	@Serial
 	private static final long serialVersionUID = 5313493413859894403L;
 	
 	@Id

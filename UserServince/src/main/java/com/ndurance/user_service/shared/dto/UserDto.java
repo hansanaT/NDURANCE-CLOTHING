@@ -1,11 +1,13 @@
 package com.ndurance.user_service.shared.dto;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
 public class UserDto implements Serializable{
 
+	@Serial
 	private static final long serialVersionUID = 6835192601898364280L;
 	private long id;
     private String userId;

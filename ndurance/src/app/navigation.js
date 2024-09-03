@@ -36,7 +36,7 @@ import { Button, Avatar,
                     </Button>
                 </div>
                 <div>
-                    <Button className="hidden sm:block md:block lg:block xl:block 2xl:block">Sign In</Button>
+                    <Button href={"/login"} className="hidden sm:block md:block lg:block xl:block 2xl:block">Sign In</Button>
                 </div>
                 <div>
                     <Dropdown
