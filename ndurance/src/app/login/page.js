@@ -1,6 +1,6 @@
 "use client";
 
-import {Button, Checkbox, Footer, Label, TextInput} from "flowbite-react";
+import {Button, Checkbox, Label, TextInput} from "flowbite-react";
 import Link from "next/link";
 import {FcGoogle} from "react-icons/fc";
 import {HR} from 'flowbite-react';
@@ -28,13 +28,13 @@ export default function Login() {
                                 <div className="mb-2 block">
                                     <Label htmlFor="email2" value="Your email"/>
                                 </div>
-                                <TextInput id="email2" type="email" placeholder="name@flowbite.com" required shadow/>
+                                <TextInput id="email2" type="email" placeholder="someone@example.com" required shadow/>
                             </div>
                             <div>
                                 <div className="mb-2 block">
                                     <Label htmlFor="password2" value="Your password"/>
                                 </div>
-                                <TextInput id="password2" type="password" required shadow/>
+                                <TextInput id="password2" type="password" placeholder="*******************" required shadow/>
                                 <Link href={"/"} className="text-sm text-cyan-600 hover:underline dark:text-cyan-500">
                                     Forgot password?
                                 </Link>
@@ -55,6 +55,5 @@ export default function Login() {
             </div>
             <Ftr/>
         </div>
-)
-    ;
+    );
 }
