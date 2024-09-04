@@ -9,6 +9,16 @@ public class UserRest {
 	private String email;
 	private List<AddressesRest> addresses;
 
+	public int getDefaultAddress() {
+		return defaultAddress;
+	}
+
+	public void setDefaultAddress(int defaultAddress) {
+		this.defaultAddress = defaultAddress;
+	}
+
+	private int defaultAddress;
+
 	public String getUserId() {
 		return userId;
 	}

@@ -14,5 +14,5 @@ public class CommentEntity {
     private String comment;
     private String userPublicId;
     @ManyToOne
-    private ClothEntity cloth;
+    private ProductEntity cloth;
 }

@@ -20,7 +20,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,25 +60,25 @@ public class UserController {
 		return returnValue;
 	}
 
-	@PutMapping(path = "/{id}")
-	public UserRest updateUser(@PathVariable String id, @RequestBody UserDetailsRequestModel userDetails) {
+	@PutMapping(path = "/{userid}")
+	public UserRest updateUser(@PathVariable String userid, @RequestBody UserDetailsRequestModel userDetails) {
 		UserRest returnValue = new UserRest();
 
 		UserDto userDto = new UserDto();
 		userDto = new ModelMapper().map(userDetails, UserDto.class);
 
-		UserDto updateUser = userService.updateUser(id, userDto);
+		UserDto updateUser = userService.updateUser(userid, userDto);
 		returnValue = new ModelMapper().map(updateUser, UserRest.class);
 
 		return returnValue;
 	}
 
-	@DeleteMapping(path = "/{id}")
-	public OperationStatusModel deleteUser(@PathVariable String id) {
+	@DeleteMapping(path = "/{userid}")
+	public OperationStatusModel deleteUser(@PathVariable String userid) {
 		OperationStatusModel returnValue = new OperationStatusModel();
 		returnValue.setOperationName(RequestOperationName.DELETE.name());
 
-		userService.deleteUser(id);
+		userService.deleteUser(userid);
 
 		returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
 		return returnValue;
@@ -100,12 +100,12 @@ public class UserController {
 		return returnValue;
 	}
 
-	@GetMapping(path = "/{id}/addresses", produces = { MediaType.APPLICATION_XML_VALUE,
+	@GetMapping(path = "/{addressId}/addresses", produces = { MediaType.APPLICATION_XML_VALUE,
 			MediaType.APPLICATION_JSON_VALUE})
-	public CollectionModel<AddressesRest> getUserAddresses(@PathVariable String id) {
+	public CollectionModel<AddressesRest> getUserAddresses(@PathVariable String addressId) {
 		List<AddressesRest> returnValue = new ArrayList<>();
 
-		List<AddressDTO> addressesDTO = addressesService.getAddresses(id);
+		List<AddressDTO> addressesDTO = addressesService.getAddresses(addressId);
 
 		if (addressesDTO != null && !addressesDTO.isEmpty()) {
 			Type listType = new TypeToken<List<AddressesRest>>() {
@@ -114,16 +114,16 @@ public class UserController {
 			
 			for (AddressesRest addressRest : returnValue) {
 				Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class)
-						.getUserAddress(id, addressRest.getAddressId()))
+						.getUserAddress(addressId, addressRest.getAddressId()))
 						.withSelfRel();
 				addressRest.add(selfLink);
 			}
 			
 		}
 		
-		Link userLink = WebMvcLinkBuilder.linkTo(UserController.class).slash(id).withRel("user");
+		Link userLink = WebMvcLinkBuilder.linkTo(UserController.class).slash(addressId).withRel("user");
 		Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class)
-				.getUserAddresses(id))
+				.getUserAddresses(addressId))
 				.withSelfRel();
 		return CollectionModel.of(returnValue, userLink, selfLink);
 	}

@@ -40,7 +40,27 @@ public class UserEntity implements Serializable {
 	
 	@OneToMany(mappedBy="userDetails", cascade=CascadeType.ALL)
 	private List<AddressEntity> addresses;
-	
+
+	private int defaultAddress;
+
+	public int getDefaultAddress() {
+		return defaultAddress;
+	}
+
+	public void setDefaultAddress(int defaultAddress) {
+		this.defaultAddress = defaultAddress;
+	}
+
+	private String profilePic;
+
+	public String getProfilePic() {
+		return profilePic;
+	}
+
+	public void setProfilePic(String profilePic) {
+		this.profilePic = profilePic;
+	}
+
 	@ManyToMany(cascade= { CascadeType.PERSIST }, fetch = FetchType.EAGER )
 	@JoinTable(name="users_roles", 
 			joinColumns=@JoinColumn(name="users_id",referencedColumnName="id"), 
