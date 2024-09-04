@@ -310,5 +310,10 @@ public class UserServiceImpl implements UserService {
         
         return returnValue;
 	}
-	
+
+	@Override
+	public UserEntity getUserByE(String email) {
+		return userRepository.findByEmail(email);
+	}
+
 }

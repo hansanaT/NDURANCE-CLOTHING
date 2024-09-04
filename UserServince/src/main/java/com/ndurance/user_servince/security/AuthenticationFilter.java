@@ -2,6 +2,7 @@ package com.ndurance.user_servince.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ndurance.user_servince.SpringApplicationContext;
+import com.ndurance.user_servince.entity.UserEntity;
 import com.ndurance.user_servince.security.jwt.token.creator.TokenCreator;
 import com.ndurance.user_servince.service.impl.UserServiceImpl;
 import com.ndurance.user_servince.shared.dto.UserDto;
@@ -73,7 +74,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         }
 
         UserServiceImpl userService = (UserServiceImpl) SpringApplicationContext.getBean("userServiceImpl");
-        UserDto userDto = userService.getUser(userName);
+        UserEntity userDto = userService.getUserByE(userName);
 
         res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + encryptToken);
         res.addHeader("UserID", userDto.getUserId());
