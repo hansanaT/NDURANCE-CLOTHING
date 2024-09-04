@@ -60,6 +60,7 @@ public class WebSecurity{
         .permitAll()
         .requestMatchers(HttpMethod.POST, SecurityConstants.PASSWORD_RESET_URL)
         .permitAll()
+                 .requestMatchers(HttpMethod.GET, SecurityConstants.IMAGE).permitAll()
         .requestMatchers(new AntPathRequestMatcher("/h2-console/**"))
         .permitAll()
         .requestMatchers("/api-docs","/swagger-ui/**")

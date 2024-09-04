@@ -161,11 +161,9 @@ public class UserController {
 		return EntityModel.of(returnValue, Arrays.asList(userLink,userAddressesLink, selfLink));
 	}
 
-	@GetMapping("/{userid}/img")
+	@GetMapping("/img/{userid}")
 	public ResponseEntity<Resource> getImage(@PathVariable String userid) {
 		try {
-			System.out.println("=========================================================== imagename");
-
 			Resource resource = userService.getImage(userid);
 
 			String contentType = "image/jpeg"; // Default to JPEG
