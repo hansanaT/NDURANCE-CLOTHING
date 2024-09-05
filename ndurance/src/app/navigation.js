@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import "./globals.css";
+import "./globals.css"
 import { Button, Avatar,
     Dropdown,
     DropdownDivider,
@@ -10,12 +10,20 @@ import { Button, Avatar,
     DropdownItem,
     Navbar,
     NavbarBrand, } from "flowbite-react";
+import styled from "styled-components";
+
+const StyledText = styled.h1`
+        font-family: 'Inconsolata', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        `;
 
     export default function Navigation({cartCount}) {
     return (
         <Navbar fluid className="bg-transparent">
             <NavbarBrand href="https://localhost:3000/">
-                <img src="/next.svg" className="mr-3 h-6 sm:h-9" alt="Flowbite React Logo"/>
+                {/*<img src="/next.svg" className="mr-3 h-6 sm:h-9" alt="NDURANCE Logo"/>*/}
+                <StyledText>NDURANCE</StyledText>
             </NavbarBrand>
             <div className="flex md:items-end sm:items-center gap-3 py-2 md:order-2">
                 <div className="flex py-2 px-5 gap-8 text-sm text-gray-500 font-normal">
@@ -36,7 +44,19 @@ import { Button, Avatar,
                     </Button>
                 </div>
                 <div>
-                    <Button href={"/login"} className="hidden sm:block md:block lg:block xl:block 2xl:block">Sign In</Button>
+                    {/*<Button href={"/login"} className="hidden sm:block md:block lg:block xl:block 2xl:block">Sign In</Button>*/}
+                    <Dropdown
+                        arrowIcon={false}
+                        inline
+                        label={
+                            <Link href={""} className="hidden sm:block md:block lg:block xl:block 2xl:block
+                            border rounded-lg px-2 py-2 bg-[#155e75] text-white">Sign In</Link>
+                    }
+                    >
+                        <DropdownItem href={"/login"}>Member Login</DropdownItem>
+                        <DropdownDivider/>
+                        <DropdownItem href={"/emp"}>Staff Login</DropdownItem>
+                    </Dropdown>
                 </div>
                 <div>
                     <Dropdown
