@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class WishListServiceImpl implements WishListService {
@@ -58,7 +59,9 @@ public class WishListServiceImpl implements WishListService {
             throw new WishListNotFoundServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 
         wishList.forEach(wishListEntity -> {
-            wishListRepository.delete(wishListEntity);
+            if(Objects.equals(wishListEntity.getWishId(), id)){
+                wishListRepository.deleteById(wishListEntity.getId());
+            }
         });
     }
 }

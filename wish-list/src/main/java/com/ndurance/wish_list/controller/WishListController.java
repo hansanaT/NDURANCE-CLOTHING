@@ -30,8 +30,13 @@ public class WishListController {
         return wishListService.getWishList(userid);
     }
 
-    @PostMapping
-    public void save(@RequestBody WishListRequestModel requestModel){
+    @PostMapping("/{userid}")
+    public void save(@RequestBody WishListRequestModel requestModel, @PathVariable String userid){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        if(!Objects.equals(username, userid))
+            throw new WishListNotFoundServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+
         wishListService.saveWishList(requestModel);
     }
 

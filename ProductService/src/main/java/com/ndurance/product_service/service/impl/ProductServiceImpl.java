@@ -160,6 +160,20 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void saveCloth(String productId, ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception {
         ProductEntity existingCloth = productRepository.findByProductId(productId);
+
+        if(clothRequestModel.getDescription() != null)
+            existingCloth.setDescription(clothRequestModel.getDescription());
+
+        if(clothRequestModel.getName() != null)
+            existingCloth.setName(clothRequestModel.getName());
+
+        if(clothRequestModel.getType() != null)
+            existingCloth.setType(clothRequestModel.getType());
+
+        if(clothRequestModel.getPrice() != 0){
+            existingCloth.setPrice(clothRequestModel.getPrice());
+        }
+
         if (existingCloth != null) {
 
             List<String> oldImages = existingCloth.getImages();
@@ -202,7 +216,7 @@ public class ProductServiceImpl implements ProductService {
                 }
             }
         } else {
-            return;
+            throw new ProductNotFoundServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
         }
     }
 

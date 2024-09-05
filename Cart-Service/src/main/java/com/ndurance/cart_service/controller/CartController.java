@@ -31,13 +31,24 @@ public class CartController {
         return cartService.getCart(userid);
     }
 
-    @PostMapping
-    public void saveCart(@RequestBody CartRequestModel requestModel){
+    @PostMapping("/{userid}")
+    public void saveCart(@RequestBody CartRequestModel requestModel, @PathVariable String userid){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String username = authentication.getName();
+        if(!Objects.equals(username, userid))
+            throw new CartServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
         cartService.saveCart(requestModel);
     }
 
     @DeleteMapping("/{userid}/{cartid}")
     public void delete(@PathVariable String userid ,@PathVariable String cartid){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String username = authentication.getName();
+        if(!Objects.equals(username, userid))
+            throw new CartServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
+
         cartService.deleteCart(cartid, userid);
     }
 
