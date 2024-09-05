@@ -98,11 +98,33 @@ public class OrderServiceImpl implements OrderService {
                 throw new RuntimeException("No address found for the user.");
             }
         } else {
-            AddressEntity billingAddressEntity = modelMapper.map(orderRequestModel.getBillingAddresses(), AddressEntity.class);
-            order.setBillingAddress(billingAddressEntity);
 
-            AddressEntity shippingAddressEntity = modelMapper.map(orderRequestModel.getShippingAddress(), AddressEntity.class);
-            order.setShippingAddress(shippingAddressEntity);
+            AddressesModel billing_addresses_req = orderRequestModel.getBillingAddresses();
+            AddressEntity billing_address = new AddressEntity();
+
+            billing_address.setAddressId(utils.generateUserId(10));
+            billing_address.setCity(billing_addresses_req.getCity());
+            billing_address.setCountry(billing_addresses_req.getCountry());
+            billing_address.setStreetName(billing_address.getStreetName());
+            billing_address.setPostalCode(billing_address.getPostalCode());
+            billing_address.setOrder(order);
+
+            addressRepository.save(billing_address);
+            order.setBillingAddress(billing_address);
+
+            AddressEntity shipping_address = new AddressEntity();
+            AddressesModel shipping_address_req = orderRequestModel.getShippingAddress();
+
+            shipping_address.setAddressId(utils.generateUserId(10));
+            shipping_address.setCity(shipping_address_req.getCity());
+            shipping_address.setCountry(shipping_address_req.getCountry());
+            shipping_address.setStreetName(shipping_address_req.getStreetName());
+            shipping_address.setPostalCode(shipping_address_req.getPostalCode());
+            billing_address.setOrder(order);
+
+            addressRepository.save(shipping_address);
+
+            order.setShippingAddress(shipping_address);
         }
 
 
