@@ -5,7 +5,6 @@ import com.ndurance.user_servince.SpringApplicationContext;
 import com.ndurance.user_servince.entity.UserEntity;
 import com.ndurance.user_servince.security.jwt.token.creator.TokenCreator;
 import com.ndurance.user_servince.service.impl.UserServiceImpl;
-import com.ndurance.user_servince.shared.dto.UserDto;
 import com.ndurance.user_servince.shared.model.request.UserLoginRequestModel;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.SignedJWT;
@@ -13,6 +12,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,23 @@ import java.util.ArrayList;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+    public static class myResponse {;
+        private String userId;
+
+        public myResponse(String userId) {
+            this.userId = userId;
+        }
+
+        public myResponse() {
+        }
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+    }
     private final AuthenticationManager authenticationManager;
 
 
@@ -76,8 +94,27 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         UserServiceImpl userService = (UserServiceImpl) SpringApplicationContext.getBean("userServiceImpl");
         UserEntity userEntity = userService.getUserByE(userName);
 
-        res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + encryptToken);
-        res.addHeader("UserID", userEntity.getUserId());
+
+        ResponseCookie cookie = ResponseCookie.from("jwt", encryptToken)
+                .httpOnly(true)   // Cookie cannot be accessed by JavaScript
+               .secure(true)     // Cookie is sent only over HTTPS
+                .path("/")        // Cookie is valid for the entire domain
+                .maxAge(7 * 24 * 60 * 60)  // Cookie expires in 7 days
+                .sameSite("None") // Sends the cookie on cross-site requests
+                .build();
+
+        res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        myResponse myResponse = new myResponse(userEntity.getUserId());
+        res.setContentType("application/json");
+        res.setStatus(HttpServletResponse.SC_OK);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(res.getWriter(), myResponse);
+
+//        res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + encryptToken);
+//        res.addHeader("UserID", userEntity.getUserId());
+
 
     }
 

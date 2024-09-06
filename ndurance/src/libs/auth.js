@@ -42,8 +42,7 @@ export const authOptions = {
         signIn: "/login",
         signOut: "logout",
         error: "/error",
-        verifyRequest: "/verify-request",
-        newUser: "/",
+        newUser: null,
     },
     session:{
         strategy: "jwt",

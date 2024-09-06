@@ -8,10 +8,13 @@ import {Ftr} from "@/app/footer";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import axios from "axios";
-import process from "next/dist/build/webpack/loaders/resolve-url-loader/lib/postcss";
+import { Toast } from "flowbite-react";
+import { HiCheck, HiX } from "react-icons/hi";
+import {BiSolidHide, BiSolidShow} from "react-icons/bi";
 
 const SignIn = () => {
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
 
@@ -30,22 +33,20 @@ const SignIn = () => {
                 email: formData.get('email'),
                 password: formData.get('password')
             },
-                // {withCredentials: true}
+                {withCredentials: true}
             );
 
-            const user = res.headers['userId'];
+            const user = res.data.userId;
 
             if(user) {
-                router.push('/');
+                setSuccess("Login Successful");
+                router.push("/");
             }
             else {
                 setError(res.data.message || "Login Failed");
             }
         } catch (e) {
-
-            console.log(e);
-
-            // setError(error.response?.data?.message || "Invalid email or password");
+            setError(error.response?.data?.message || "Invalid email or password");
         }
     };
 
@@ -66,19 +67,36 @@ const SignIn = () => {
                         </Button>
                         <HR.Text text="or"/>
                         <form className="space-y-4 md:space-y-6" onSubmit={handleSignIn}>
-                            {error && <div className="text-red-500 text-sm">{error}</div>}
                             <div>
                                 <div className="mb-2 block">
                                     <Label htmlFor="emailField" value="Your email"/>
                                 </div>
-                                <TextInput id="emailField" name="email" type="email" placeholder="someone@example.com" required shadow/>
+                                <TextInput id="emailField" name="email" type="email" placeholder="someone@example.com"
+                                           required shadow/>
                             </div>
                             <div>
                                 <div className="mb-2 block">
                                     <Label htmlFor="passField" value="Your password"/>
                                 </div>
-                                <TextInput id="passField" name="password" type="password" placeholder="*******************" required
-                                           shadow/>
+                                <div className="relative w-full">
+                                    <TextInput
+                                        id="passField"
+                                        name="password"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="*******************"
+                                        required
+                                        shadow
+                                    />
+                                    <button
+                                        className="absolute right-0 top-0 h-full px-4 flex items-center justify-center transition duration-150 ease"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setShowPassword(!showPassword);
+                                        }}
+                                    >
+                                        {showPassword ? <BiSolidHide/> : <BiSolidShow/>}
+                                    </button>
+                                </div>
                                 <Link href={"/"} className="text-sm text-cyan-600 hover:underline dark:text-cyan-500">
                                     Forgot password?
                                 </Link>
@@ -102,6 +120,28 @@ const SignIn = () => {
                             </Link>
                         </div>
                     </div>
+                </div>
+                <div className="flex flex-col gap-4">
+                    {success &&
+                    <Toast className="fixed z-50 bottom-10 right-5">
+                        <div
+                            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100
+                            text-green-500 dark:bg-green-800 dark:text-green-200">
+                            <HiCheck className="h-5 w-5"/>
+                        </div>
+                        <div className="ml-3 text-sm font-normal">{success}</div>
+                        <Toast.Toggle/>
+                    </Toast>}
+                    {error &&
+                    <Toast className="fixed z-50 bottom-10 right-5">
+                        <div
+                            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100
+                            text-red-500 dark:bg-red-800 dark:text-red-200">
+                            <HiX className="h-5 w-5"/>
+                        </div>
+                        <div className="ml-3 text-sm font-normal">{error}</div>
+                        <Toast.Toggle/>
+                    </Toast>}
                 </div>
             </div>
             <Ftr/>

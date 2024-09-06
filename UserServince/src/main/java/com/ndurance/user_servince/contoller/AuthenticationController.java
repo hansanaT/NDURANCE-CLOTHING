@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class AuthenticationController {
- 
-	@CrossOrigin(origins = "https://localhost:3000")
+
 	@PostMapping("/users/login")
 	public void theFakeLogin(@RequestBody LoginRequestModel loginRequestModel)
 	{
