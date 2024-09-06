@@ -60,7 +60,7 @@ public class CartServiceImpl implements CartService {
 
         cartEntityList.forEach(cartEntity -> {
             if(Objects.equals(cartEntity.getCartId(), id)){
-                cartRepository.delete(cartEntity);
+                cartRepository.deleteById(cartEntity.getId());
             }
         });
     }
