@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import axios from "axios";
 
+
 export async function POST(req) {
     try {
         const {fname,lname,email,password} = await req.json();

@@ -5,8 +5,50 @@ import Link from "next/link";
 import {FcGoogle} from "react-icons/fc";
 import {HR} from 'flowbite-react';
 import {Ftr} from "@/app/footer";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import axios from "axios";
+import process from "next/dist/build/webpack/loaders/resolve-url-loader/lib/postcss";
 
-export default function Login() {
+const SignIn = () => {
+    const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const router = useRouter();
+
+    const handleSignIn = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        try {
+            const email = formData.get('email');
+            const password = formData.get('password');
+
+            if (!email || !password) {
+                console.log("Email or password is missing");
+                return;
+            }
+            const res = await axios.post(`http://localhost:8080/user-service/users/login`, {
+                email: formData.get('email'),
+                password: formData.get('password')
+            },
+                // {withCredentials: true}
+            );
+
+            const user = res.headers['userId'];
+
+            if(user) {
+                router.push('/');
+            }
+            else {
+                setError(res.data.message || "Login Failed");
+            }
+        } catch (e) {
+
+            console.log(e);
+
+            // setError(error.response?.data?.message || "Invalid email or password");
+        }
+    };
+
     return (
         <div>
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -23,24 +65,26 @@ export default function Login() {
                             Log in with Google
                         </Button>
                         <HR.Text text="or"/>
-                        <form className="space-y-4 md:space-y-6">
+                        <form className="space-y-4 md:space-y-6" onSubmit={handleSignIn}>
+                            {error && <div className="text-red-500 text-sm">{error}</div>}
                             <div>
                                 <div className="mb-2 block">
-                                    <Label htmlFor="email2" value="Your email"/>
+                                    <Label htmlFor="emailField" value="Your email"/>
                                 </div>
-                                <TextInput id="email2" type="email" placeholder="someone@example.com" required shadow/>
+                                <TextInput id="emailField" name="email" type="email" placeholder="someone@example.com" required shadow/>
                             </div>
                             <div>
                                 <div className="mb-2 block">
-                                    <Label htmlFor="password2" value="Your password"/>
+                                    <Label htmlFor="passField" value="Your password"/>
                                 </div>
-                                <TextInput id="password2" type="password" placeholder="*******************" required shadow/>
+                                <TextInput id="passField" name="password" type="password" placeholder="*******************" required
+                                           shadow/>
                                 <Link href={"/"} className="text-sm text-cyan-600 hover:underline dark:text-cyan-500">
                                     Forgot password?
                                 </Link>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Checkbox id="agree"/>
+                                <Checkbox id="agree" required/>
                                 <Label htmlFor="agree" className="flex">
                                     I agree with the&nbsp;
                                     <Link href="#" className="text-cyan-600 hover:underline dark:text-cyan-500">
@@ -50,10 +94,20 @@ export default function Login() {
                             </div>
                             <Button className="w-full" type="submit">Login</Button>
                         </form>
+                        <div className="mb-2 block space-x-1 text-center">
+                            <Label htmlFor="signIn" value="Don't have an account?"/>
+                            <Link id="signIn" href={"/register"}
+                                  className="text-sm text-cyan-600 hover:underline dark:text-cyan-500">
+                                Sign Up
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
             <Ftr/>
         </div>
     );
+
 }
+
+export default SignIn;
