@@ -1,12 +1,59 @@
 "use client";
 
-import {Button, Checkbox, Label, TextInput} from "flowbite-react";
+import {Button, Checkbox, Label, TextInput, Toast} from "flowbite-react";
 import Link from "next/link";
 import {FcGoogle} from "react-icons/fc";
 import {HR} from 'flowbite-react';
 import {Ftr} from "@/app/footer";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {BiSolidHide, BiSolidShow} from "react-icons/bi";
+import axios from "axios";
+import {HiCheck, HiX} from "react-icons/hi";
 
-export default function Login() {
+
+const Register = () => {
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const router = useRouter();
+
+    const handleSignUp = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        try {
+            const email = formData.get('email');
+            const password = formData.get('password');
+            const fname = formData.get('fname');
+            const lname = formData.get('lname');
+
+            if (!email || !password || !fname || !lname) {
+                console.log("Email, password, first name or last name is missing");
+                return;
+            }
+            const res = await axios.post(`http://localhost:8080/user-service/users`, {
+                firstName: formData.get('fname'),
+                    lastName: formData.get('lname'),
+                email: formData.get('email'),
+                password: formData.get('password')
+            },
+                {withCredentials: true},
+            );
+
+            const responseStatus = res.status;
+
+            if(responseStatus === 200) {
+                setSuccess("Registration Successful");
+                router.push("/login");
+            }
+            else {
+                setError(res.data.message || "Registration Failed");
+            }
+        } catch (e) {
+            setError(error.response?.data?.message || "Unknown Error Occurred");
+        }
+    }
+
     return (
         <div>
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -23,33 +70,53 @@ export default function Login() {
                             Sign Up with Google
                         </Button>
                         <HR.Text text="or"/>
-                        <form className="space-y-4 md:space-y-6">
+                        <form className="space-y-4 md:space-y-6" onSubmit={handleSignUp}>
                             <div className="flex space-x-3">
                                 <div>
                                     <div className="mb-2 block">
-                                        <Label htmlFor="fname" value="First Name"/>
+                                        <Label htmlFor="FirstName" value="First Name"/>
                                     </div>
-                                    <TextInput id="fname" type="text" placeholder="John" required shadow/>
+                                    <TextInput id="FirstName" name="fname" type="text" placeholder="John" required
+                                               shadow/>
                                 </div>
                                 <div>
                                     <div className="mb-2 block">
-                                        <Label htmlFor="lname" value="Last Name"/>
+                                        <Label htmlFor="LastName" value="Last Name"/>
                                     </div>
-                                    <TextInput id="lname" type="text" placeholder="Doe" required shadow/>
+                                    <TextInput id="LastName" name="lname" type="text" placeholder="Doe" required
+                                               shadow/>
                                 </div>
                             </div>
                             <div>
                                 <div className="mb-2 block">
-                                    <Label htmlFor="email2" value="Your email"/>
+                                    <Label htmlFor="emailfield" value="Your email"/>
                                 </div>
-                                <TextInput id="email2" type="email" placeholder="someone@example.com" required shadow/>
+                                <TextInput id="emailField" name="email" type="email" placeholder="someone@example.com"
+                                           required shadow/>
                             </div>
                             <div>
                                 <div className="mb-2 block">
-                                    <Label htmlFor="password2" value="Your password"/>
+                                    <Label htmlFor="passwordField" value="Your password"/>
                                 </div>
-                                <TextInput id="password2" type="password" placeholder="*******************" required
-                                           shadow/>
+                                <div className="relative w-full">
+                                    <TextInput
+                                        id="passField"
+                                        name="password"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="*******************"
+                                        required
+                                        shadow
+                                    />
+                                    <button
+                                        className="absolute right-0 top-0 h-full px-4 flex items-center justify-center transition duration-150 ease"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setShowPassword(!showPassword);
+                                        }}
+                                    >
+                                        {showPassword ? <BiSolidHide/> : <BiSolidShow/>}
+                                    </button>
+                                </div>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Checkbox id="agree"/>
@@ -71,8 +138,32 @@ export default function Login() {
                         </div>
                     </div>
                 </div>
+                <div className="flex flex-col gap-4">
+                    {success &&
+                        <Toast className="fixed z-50 bottom-10 right-5">
+                            <div
+                                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100
+                            text-green-500 dark:bg-green-800 dark:text-green-200">
+                                <HiCheck className="h-5 w-5"/>
+                            </div>
+                            <div className="ml-3 text-sm font-normal">{success}</div>
+                            <Toast.Toggle/>
+                        </Toast>}
+                    {error &&
+                        <Toast className="fixed z-50 bottom-10 right-5">
+                            <div
+                                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100
+                            text-red-500 dark:bg-red-800 dark:text-red-200">
+                                <HiX className="h-5 w-5"/>
+                            </div>
+                            <div className="ml-3 text-sm font-normal">{error}</div>
+                            <Toast.Toggle/>
+                        </Toast>}
+                </div>
             </div>
             <Ftr/>
         </div>
     );
 }
+
+export default Register;
