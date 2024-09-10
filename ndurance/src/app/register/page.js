@@ -39,15 +39,14 @@ const Register = () => {
             },
                 {withCredentials: true},
             );
-
-            const responseStatus = res.status;
-
-            if(responseStatus === 200) {
-                setSuccess("Registration Successful");
-                router.push("/login");
+            if(res.status === 200) {
+                setSuccess("Account created successfully! Redirecting to login page...");
+                setTimeout(() => {
+                    router.push("/login");
+                }, 2000);
             }
             else {
-                setError(res.data.message || "Registration Failed");
+                setError(res.data.message ||"Unknown Error Occurred");
             }
         } catch (e) {
             setError(error.response?.data?.message || "Unknown Error Occurred");

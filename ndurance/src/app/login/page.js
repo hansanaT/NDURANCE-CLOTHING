@@ -40,7 +40,9 @@ const SignIn = () => {
 
             if(user) {
                 setSuccess("Login Successful");
-                router.push("/");
+                setTimeout(() => {
+                    router.push("/");
+                },2000);
             }
             else {
                 setError(res.data.message || "Login Failed");
