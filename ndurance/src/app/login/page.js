@@ -36,7 +36,7 @@ const SignIn = () => {
                 {withCredentials: true}
             );
 
-            const user = res.data.userId;
+            const user = document.cookie.includes('userId');
 
             if(user) {
                 setSuccess("Login Successful");

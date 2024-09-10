@@ -95,22 +95,31 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         UserEntity userEntity = userService.getUserByE(userName);
 
 
-        ResponseCookie cookie = ResponseCookie.from("jwt", encryptToken)
-                .httpOnly(true)   // Cookie cannot be accessed by JavaScript
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", encryptToken)
+                .httpOnly(false) //if set to true, js can't access
                .secure(true)     // Cookie is sent only over HTTPS
                 .path("/")        // Cookie is valid for the entire domain
                 .maxAge(7 * 24 * 60 * 60)  // Cookie expires in 7 days
                 .sameSite("None") // Sends the cookie on cross-site requests
                 .build();
 
-        res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        ResponseCookie userIdCookie = ResponseCookie.from("userId", userEntity.getUserId())
+                .httpOnly(false) //if set to true, js can't access
+                .secure(true)     // Cookie is sent only over HTTPS
+                .path("/")        // Cookie is valid for the entire domain
+                .maxAge(7 * 24 * 60 * 60)  // Cookie expires in 7 days
+                .sameSite("None") // Sends the cookie on cross-site requests
+                .build();
 
-        myResponse myResponse = new myResponse(userEntity.getUserId());
-        res.setContentType("application/json");
-        res.setStatus(HttpServletResponse.SC_OK);
+        res.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+        res.addHeader(HttpHeaders.SET_COOKIE, userIdCookie.toString());
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writeValue(res.getWriter(), myResponse);
+//        myResponse myResponse = new myResponse(userEntity.getUserId());
+//        res.setContentType("application/json");
+//        res.setStatus(HttpServletResponse.SC_OK);
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.writeValue(res.getWriter(), myResponse);
 
 //        res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + encryptToken);
 //        res.addHeader("UserID", userEntity.getUserId());
