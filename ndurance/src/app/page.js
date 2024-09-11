@@ -1,12 +1,58 @@
+"use client"; // Add this line at the top
+
 import Navigation from "./navigation";
 import './globals.css';
 import {Button, HR, TextInput} from "flowbite-react";
 import SHOP_DATA from "@/shopData";
 import {Ftr} from "@/app/footer";
+import axios from "axios";
+import React, {useState,useEffect} from "react";
+import Cookies from 'js-cookie';
 
-export default function Home() {
+const Home = ()=>{
 
-    const categoryData = SHOP_DATA;
+    const [userDetails, setUserDetails] = useState(null);
+    const [productDetails, setProductDetails] = useState([{
+        productId: null,
+        name: null,
+        description: null,
+        images:[],
+        type: null,
+        price: null
+    }]);
+
+    const products = async ()=>{
+        return await axios.get(`http://localhost:8080/product-service/products`)
+    }
+
+    const user = async ()=>{
+        const token = Cookies.get('jwt');
+        const userId = Cookies.get('userId');
+
+        const user =  await axios.get(`http://localhost:8080/user-service/users/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
+        return user;
+    }
+
+    useEffect(() => {
+
+        user().then((data) => {
+            setUserDetails(data);
+        });
+
+        products().then((data) => {
+            setProductDetails(data.data);
+        });
+
+    }, []);
+
+    useEffect(() => {
+        
+    }, [userDetails, productDetails]);
 
     return (
         <div>
@@ -25,35 +71,31 @@ export default function Home() {
             </div>
             <div className="carousel carousel-center rounded-box space-x-4 p-4 overflow-hidden">
                 <div className="carousel-track flex space-x-4 animate-scroll">
-                    {categoryData.map((category) => (
-                        category.items.slice(0, 3).map((item) => (
-                            <div className="carousel-item relative">
-                                <img
-                                    src={item.imageUrl}
-                                    alt={item.name}
-                                    className="rounded-box"/>
-                                <div
-                                    className="justify-center absolute bottom-0 rounded-md bg-white bg-opacity-70 p-2 flex gap-3">
-                                    <p className="text-md font-bold mt-2">${item.price}</p>
-                                    <Button>Add to Cart</Button>
-                                </div>
-                            </div>
-                        ))
+                    {productDetails.map((category) => (
+                        <div className="carousel-item relative">
+                        <img
+                            src={`http://localhost:8080/product-service/products/images/${category.images[0]}`}
+                            alt={category.name}
+                            className="rounded-box"/>
+                        <div
+                            className="justify-center absolute bottom-0 rounded-md bg-white bg-opacity-70 p-2 flex gap-3">
+                            <p className="text-md font-bold mt-2">${category.price}</p>
+                            <Button>Add to Cart</Button>
+                        </div>
+                    </div>
                     ))}
-                    {categoryData.map((category) => (
-                        category.items.slice(0, 3).map((item) => (
-                            <div className="carousel-item relative">
-                                <img
-                                    src={item.imageUrl}
-                                    alt={item.name}
-                                    className="rounded-box"/>
-                                <div
-                                    className="justify-center absolute bottom-0 rounded-md bg-white bg-opacity-70 p-2 flex gap-3">
-                                    <p className="text-md font-bold mt-2">${item.price}</p>
-                                    <Button>Add to Cart</Button>
-                                </div>
-                            </div>
-                        ))
+                    {productDetails.map((category) => (
+                        <div className="carousel-item relative">
+                        <img
+                            src={`http://localhost:8080/product-service/products/images/${category.images[0]}`}
+                            alt={category.name}
+                            className="rounded-box"/>
+                        <div
+                            className="justify-center absolute bottom-0 rounded-md bg-white bg-opacity-70 p-2 flex gap-3">
+                            <p className="text-md font-bold mt-2">${category.price}</p>
+                            <Button>Add to Cart</Button>
+                        </div>
+                    </div>
                     ))}
                 </div>
             </div>
@@ -113,3 +155,5 @@ export default function Home() {
         </div>
     );
 }
+
+export default Home;

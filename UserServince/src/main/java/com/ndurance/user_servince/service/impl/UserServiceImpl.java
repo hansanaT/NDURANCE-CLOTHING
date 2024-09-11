@@ -284,14 +284,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Resource loadImageAsResource(String imageName) throws MalformedURLException {
-		System.out.println("===========================================================");
 		Path filePath = Paths.get(UPLOAD_DIR).resolve(imageName).normalize();
 		Resource resource = new UrlResource(filePath.toUri());
 		if (resource.exists()) {
-			System.out.println("============================  ===============================");
 			return resource;
 		} else {
-			System.out.println("=========================================================== ****");
 			throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 		}
 	}

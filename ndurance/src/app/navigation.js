@@ -11,6 +11,8 @@ import {
     Navbar,
 } from "flowbite-react";
 import styled from "styled-components";
+import Cookies from 'js-cookie';
+import axios from "axios";
 
 const StyledText = styled.h1`
         font-family: 'Inconsolata', sans-serif;
@@ -21,9 +23,28 @@ const StyledText = styled.h1`
 const Navigation = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const[isSignIn, setIsSignIn] = useState(true);
+    const [userDetails, setUserDetails] = useState({});
+    const [imageSrc, setImageSrc] = useState(null);
+
+    const user = async ()=>{
+        const token = Cookies.get('jwt');
+        const userId = Cookies.get('userId');
+
+        const user =  await axios.get(`http://localhost:8080/user-service/users/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
+        return user;
+    }
 
     useEffect(() => {
         const jwtExists = document.cookie.split('; ').find((row) => row.startsWith('jwt='));
+
+        user().then((response) => {
+            setUserDetails(response.data);
+        });
 
         if (jwtExists) {
             setIsAuthenticated(true);
@@ -33,6 +54,32 @@ const Navigation = () => {
             setIsSignIn(true);
         }
     }, []);
+
+    useEffect(() => {
+        const fetchUserProfilePicture = async () => {
+            try {
+                // Get the JWT token and user ID from cookies
+                const token = Cookies.get('jwt');
+                const userId = Cookies.get('userId');
+
+                // Request to get the user's profile picture
+                const response = await axios.get(`http://localhost:8080/user-service/users/image/${userId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    responseType: 'blob', // Important: set response type to 'blob' to handle image data
+                });
+
+                // Convert the response data (blob) to a URL that can be used as an image source
+                const imageUrl = URL.createObjectURL(response.data);
+                setImageSrc(imageUrl);
+            } catch (error) {
+                console.error("Error fetching user profile picture:", error);
+            }
+        };
+
+        fetchUserProfilePicture();
+    }, [userDetails]);
 
     return (
         <Navbar fluid rounded>
@@ -58,13 +105,13 @@ const Navigation = () => {
                         arrowIcon={false}
                         inline
                         label={
-                            <Avatar alt="User settings" img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                            <Avatar alt="User settings" img={imageSrc}
                                     rounded/>
                         }
                     >
                         <Dropdown.Header>
-                            <span className="block text-sm">Bonnie Green</span>
-                            <span className="block truncate text-sm font-medium">name@flowbite.com</span>
+                            <span className="block text-sm">{userDetails.email}</span>
+                            <span className="block truncate text-sm font-medium">{userDetails.firstName}</span>
                         </Dropdown.Header>
                         <Dropdown.Item>Dashboard</Dropdown.Item>
                         <Dropdown.Item>Settings</Dropdown.Item>

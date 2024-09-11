@@ -161,7 +161,7 @@ public class UserController {
 		return EntityModel.of(returnValue, Arrays.asList(userLink,userAddressesLink, selfLink));
 	}
 
-	@GetMapping("/img/{userid}")
+	@GetMapping("/image/{userid}")
 	public ResponseEntity<Resource> getImage(@PathVariable String userid) {
 		try {
 			Resource resource = userService.getImage(userid);

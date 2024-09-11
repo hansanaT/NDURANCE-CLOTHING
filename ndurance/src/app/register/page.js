@@ -13,6 +13,7 @@ import {HiCheck, HiX} from "react-icons/hi";
 
 
 const Register = () => {
+
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [showPassword, setShowPassword] = useState(false);
