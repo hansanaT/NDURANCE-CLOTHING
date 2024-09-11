@@ -1,15 +1,14 @@
 package com.ndurance.user_servince.contoller;
 
+import com.ndurance.user_servince.exceptions.UserServiceException;
 import com.ndurance.user_servince.shared.model.request.UserDetailsRequestModel;
-import com.ndurance.user_servince.shared.model.response.RequestOperationStatus;
+import com.ndurance.user_servince.shared.model.request.UserPasswordReset;
+import com.ndurance.user_servince.shared.model.response.*;
 import com.ndurance.user_servince.service.AddressService;
 import com.ndurance.user_servince.service.UserService;
 import com.ndurance.user_servince.shared.Roles;
 import com.ndurance.user_servince.shared.dto.AddressDTO;
 import com.ndurance.user_servince.shared.dto.UserDto;
-import com.ndurance.user_servince.shared.model.response.AddressesRest;
-import com.ndurance.user_servince.shared.model.response.OperationStatusModel;
-import com.ndurance.user_servince.shared.model.response.UserRest;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
@@ -21,15 +20,14 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/users")
@@ -46,6 +44,11 @@ public class UserController {
  
 	@GetMapping(path = "/{userid}")
 	public UserRest getUser(@PathVariable String userid) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String username = authentication.getName();
+		if(!Objects.equals(username, userid))
+			throw new UserServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
+
 		UserDto userDto = userService.getUserByUserId(userid);
 		ModelMapper modelMapper = new ModelMapper();
 		return modelMapper.map(userDto, UserRest.class);
@@ -58,7 +61,7 @@ public class UserController {
 		return modelMapper.map(createdUser, UserRest.class);
 	}
 
-	@PostMapping()
+	@PostMapping
 	public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) throws Exception {
 		UserRest returnValue = new UserRest();
 
@@ -97,7 +100,17 @@ public class UserController {
 		return returnValue;
 	}
 
-	@GetMapping()
+	@PostMapping("/reset-password/{userId}")
+	public void resetPassWord(@RequestBody UserPasswordReset userPasswordReset, @PathVariable String userId){
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String username = authentication.getName();
+		if(!Objects.equals(username, userId))
+			throw new UserServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
+
+        userService.resetPassWord(userPasswordReset);
+	}
+
+	@GetMapping
 	public List<UserRest> getUsers(@RequestParam(value = "page", defaultValue = "0") int page,
 			@RequestParam(value = "limit", defaultValue = "2") int limit) {
 		List<UserRest> returnValue = new ArrayList<>();

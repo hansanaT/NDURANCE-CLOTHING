@@ -14,6 +14,7 @@ import com.ndurance.user_servince.service.UserService;
 import com.ndurance.user_servince.shared.AmazonSES;
 import com.ndurance.user_servince.shared.dto.AddressDTO;
 import com.ndurance.user_servince.shared.dto.UserDto;
+import com.ndurance.user_servince.shared.model.request.UserPasswordReset;
 import com.ndurance.user_servince.shared.model.response.ErrorMessages;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
@@ -302,6 +303,17 @@ public class UserServiceImpl implements UserService {
 	public Resource getImage(String userId) throws MalformedURLException {
 		String profilePic = userRepository.findByUserId(userId).getProfilePic();
 		return this.loadImageAsResource(profilePic);
+	}
+
+	@Override
+	public void resetPassWord(UserPasswordReset userPasswordReset) {
+		UserEntity user = userRepository.findByUserId(userPasswordReset.getUserId());
+		if(bCryptPasswordEncoder.matches(userPasswordReset.getCurrentPassword(), user.getEncryptedPassword())){
+			if(userPasswordReset.getNewPassword().equals(userPasswordReset.getConfirmPassword())){
+				user.setEncryptedPassword(bCryptPasswordEncoder.encode(userPasswordReset.getNewPassword()));
+				userRepository.save(user);
+			}
+		}
 	}
 
 }
