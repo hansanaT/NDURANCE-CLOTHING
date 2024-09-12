@@ -2,7 +2,10 @@ package com.ndurance.product_service.service.impl;
 
 import com.ndurance.product_service.entity.CommentEntity;
 import com.ndurance.product_service.exceptions.ProductNotFoundServiceException;
+import com.ndurance.product_service.feign_client.UserClient;
+import com.ndurance.product_service.feign_client.model.UserRest;
 import com.ndurance.product_service.repository.CommentRepository;
+import com.ndurance.product_service.shared.ProductType;
 import com.ndurance.product_service.shared.Utils;
 import com.ndurance.product_service.shared.dto.CommentDTO;
 import com.ndurance.product_service.shared.model.request.ClothRequestModel;
@@ -16,6 +19,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -37,6 +43,9 @@ public class ProductServiceImpl implements ProductService {
     private CommentRepository commentRepository;
     @Autowired
     private Utils utils;
+
+    @Autowired
+    private UserClient userClient;
 
     private final ModelMapper modelMapper = new ModelMapper();
 
@@ -75,6 +84,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Page<ProductDTO> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findAll(pageable).map(i-> modelMapper.map(i, ProductDTO.class));
+    }
+
+    @Override
+    public Page<ProductDTO> findByType(ProductType type, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findByType(type,pageable).map(i-> modelMapper.map(i, ProductDTO.class));
+    }
+
+    @Override
     public List<CommentDTO> getComments(String productId) {
         ProductEntity cloth = productRepository.findByProductId(productId);
 
@@ -91,10 +112,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void saveComment(CommentRequestModel requestModel) {
+    public void saveComment(CommentRequestModel requestModel, String userid, String auth) {
+
+        UserRest userRest = userClient.getCustomerById(userid, auth);
 
         CommentEntity comment = new CommentEntity();
-        comment.setUserPublicId(requestModel.getUserPublicId());
+        comment.setEmail(userRest.getEmail());
+        comment.setUserId(userid);
+        comment.setPic(userRest.getProfilePic());
         comment.setComment(requestModel.getComment());
 
         ProductEntity cloth = productRepository.findByProductId(requestModel.getClothPublicId());
@@ -139,7 +164,7 @@ public class ProductServiceImpl implements ProductService {
                     Path uploadPath = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize();
                     Files.createDirectories(uploadPath);
 
-                    String fileName = utils.generateUserId(20) + file.getOriginalFilename();
+                    String fileName = utils.generateUserId(10) + file.getOriginalFilename();
                     images.add(fileName);
 
                     Path filePath = uploadPath.resolve(Objects.requireNonNull(fileName));
@@ -196,7 +221,7 @@ public class ProductServiceImpl implements ProductService {
                             Path uploadPath = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize();
                             Files.createDirectories(uploadPath);
 
-                            String fileName = utils.generateUserId(20) + file.getOriginalFilename();
+                            String fileName = utils.generateUserId(10) + file.getOriginalFilename();
                             newImages.add(fileName);
 
                             Path filePath = uploadPath.resolve(Objects.requireNonNull(fileName));

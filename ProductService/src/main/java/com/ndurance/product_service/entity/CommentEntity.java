@@ -12,7 +12,9 @@ public class CommentEntity {
     @GeneratedValue
     private Long id;
     private String comment;
-    private String userPublicId;
+    private String userId;
+    private String email;
+    private String pic;
     @ManyToOne
     private ProductEntity cloth;
 }

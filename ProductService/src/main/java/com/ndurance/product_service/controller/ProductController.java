@@ -1,6 +1,7 @@
 package com.ndurance.product_service.controller;
 
 import com.ndurance.product_service.exceptions.ProductServiceException;
+import com.ndurance.product_service.exceptions.ProductUnAuthorizedServiceException;
 import com.ndurance.product_service.shared.ProductType;
 import com.ndurance.product_service.shared.dto.CommentDTO;
 import com.ndurance.product_service.shared.model.request.ClothRequestModel;
@@ -9,17 +10,22 @@ import com.ndurance.product_service.shared.dto.ProductDTO;
 import com.ndurance.product_service.shared.model.request.CommentRequestModel;
 import com.ndurance.product_service.shared.model.response.ProductRest;
 import com.ndurance.product_service.shared.model.response.ErrorMessages;
+import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/products")
@@ -30,12 +36,19 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping("/comments")
-    public void insertComment(@RequestBody CommentRequestModel requestModel){
+    @PostMapping("/comments/{userid}")
+    public void insertComment(@RequestBody CommentRequestModel requestModel, @PathVariable String userid, HttpServletRequest request){
+        String authorizationHeader = request.getHeader("Authorization");
+
         if(requestModel == null)
             throw new ProductServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 
-        productService.saveComment(requestModel);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        if(!Objects.equals(username, userid))
+            throw new ProductUnAuthorizedServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
+
+        productService.saveComment(requestModel, userid, authorizationHeader);
     }
 
     @GetMapping("/comments/{productId}")
@@ -114,11 +127,12 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductRest> getAllCloths(){
-        List<ProductRest> productRests = new ArrayList<>();
-        productService.getCloths().forEach(i->{
-            productRests.add(modelMapper.map(i, ProductRest.class));
-        });
-        return productRests;
+    public Page<ProductRest> getAllCloths(@RequestParam(name = "page", defaultValue="0") int page, @RequestParam(name="size", defaultValue = "20") int size){
+        return productService.findAll(page,size).map(i-> modelMapper.map(i, ProductRest.class));
+    }
+
+    @GetMapping("/byType")
+    public Page<ProductRest> getAllCloths(@RequestParam ProductType type, @RequestParam(name = "page", defaultValue="0") int page, @RequestParam(name="size", defaultValue = "20") int size){
+        return productService.findByType(type, page,size).map(i-> modelMapper.map(i, ProductRest.class));
     }
 }
