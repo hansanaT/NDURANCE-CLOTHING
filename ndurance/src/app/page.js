@@ -45,7 +45,7 @@ const Home = ()=>{
         });
 
         products().then((data) => {
-            setProductDetails(data.data);
+            setProductDetails(data.data.content);
         });
 
     }, []);

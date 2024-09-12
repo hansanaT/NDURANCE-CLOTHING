@@ -42,8 +42,10 @@ public class WebSecurity{
                  requestMatchers(new AntPathRequestMatcher("/h2-console/**"))
         .permitAll().requestMatchers(HttpMethod.GET, SecurityConstants.PRODUCTS)
                  .permitAll()
+                 .requestMatchers(HttpMethod.POST, SecurityConstants.PRODUCTS_COMMENTS).hasRole("USER")
                  .requestMatchers(HttpMethod.PUT, SecurityConstants.PRODUCTS).hasRole("ADMIN")
                  .requestMatchers(HttpMethod.POST, SecurityConstants.PRODUCTS).hasRole("ADMIN")
+
         .anyRequest().authenticated())
      
         .addFilter(new AuthorizationFilter(authenticationManager))
@@ -56,19 +58,19 @@ public class WebSecurity{
         return http.build();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource()
-    {
-    	final CorsConfiguration configuration = new CorsConfiguration();
-    	   
-    	configuration.setAllowedOrigins(Arrays.asList("*"));
-    	configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","OPTIONS"));
-    	configuration.setAllowCredentials(true);
-    	configuration.setAllowedHeaders(Arrays.asList("*"));
-    	
-    	final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    	source.registerCorsConfiguration("/**", configuration);
-    	
-    	return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource()
+//    {
+//    	final CorsConfiguration configuration = new CorsConfiguration();
+//
+//    	configuration.setAllowedOrigins(Arrays.asList("*"));
+//    	configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","OPTIONS"));
+//    	configuration.setAllowCredentials(true);
+//    	configuration.setAllowedHeaders(Arrays.asList("*"));
+//
+//    	final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//    	source.registerCorsConfiguration("/**", configuration);
+//
+//    	return source;
+//    }
 }

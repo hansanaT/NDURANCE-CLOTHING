@@ -1,10 +1,10 @@
 package com.ndurance.product_service.exceptions;
 
-public class ProductServiceException extends RuntimeException{
- 
-	private static final long serialVersionUID = 1348771109171435607L;
+public class ProductUnAuthorizedServiceException extends RuntimeException{
 
-	public ProductServiceException(String message)
+	private static final long serialVersionUID = 1972734109171435607L;
+
+	public ProductUnAuthorizedServiceException(String message)
 	{
 		super(message);
 	}

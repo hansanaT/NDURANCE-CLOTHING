@@ -21,7 +21,14 @@ public class AppExceptionsHandler {
 		return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 	}
 	
-	
+	@ExceptionHandler(value = {ProductUnAuthorizedServiceException.class})
+	public ResponseEntity<Object> handleProductUnAuthorizedServiceException(ProductUnAuthorizedServiceException ex, WebRequest request)
+	{
+		ErrorMessage errorMessage = new ErrorMessage(new Date(), ex.getMessage());
+
+		return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.UNAUTHORIZED);
+	}
+
 	@ExceptionHandler(value = {Exception.class})
 	public ResponseEntity<Object> handleOtherExceptions(Exception ex, WebRequest request)
 	{

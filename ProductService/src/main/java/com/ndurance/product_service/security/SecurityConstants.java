@@ -8,6 +8,7 @@ public class SecurityConstants {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
     public static final String PRODUCTS = "/products/**";
+    public static final String PRODUCTS_COMMENTS = "/products/comments/**";
     public static final String IMAGE = "/products/images/**";
     public static String getTokenSecret()
     {

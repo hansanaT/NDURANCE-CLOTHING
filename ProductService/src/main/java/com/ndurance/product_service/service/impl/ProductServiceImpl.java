@@ -2,6 +2,8 @@ package com.ndurance.product_service.service.impl;
 
 import com.ndurance.product_service.entity.CommentEntity;
 import com.ndurance.product_service.exceptions.ProductNotFoundServiceException;
+import com.ndurance.product_service.feign_client.UserClient;
+import com.ndurance.product_service.feign_client.model.UserRest;
 import com.ndurance.product_service.repository.CommentRepository;
 import com.ndurance.product_service.shared.Utils;
 import com.ndurance.product_service.shared.dto.CommentDTO;
@@ -16,6 +18,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -38,21 +43,32 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private Utils utils;
 
+    @Autowired
+    private UserClient userClient;
+
     private final ModelMapper modelMapper = new ModelMapper();
 
     private static final String UPLOAD_DIR = System.getProperty("user.home") + "/uploads/";
     private final Path fileStorageLocation = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize();
 
     @Override
-    public ProductDTO getCloth(String productId) {
+    public ProductDTO getProducts(String productId) {
         ProductEntity productEntity = productRepository.findByProductId(productId);
         if(productEntity == null)
             throw new ProductNotFoundServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
-        return modelMapper.map(productEntity, ProductDTO.class);
+
+        List<CommentDTO> commentDTOS = new ArrayList<>();
+
+        ProductDTO productDTO = modelMapper.map(productEntity, ProductDTO.class);
+        productDTO.getComments().forEach(i->{
+            commentDTOS.add(modelMapper.map(i, CommentDTO.class));
+        });
+        productDTO.setComments(commentDTOS);
+        return productDTO;
     }
 
     @Override
-    public List<ProductDTO> getCloths() {
+    public List<ProductDTO> getProducts() {
 
         List<ProductDTO> productDTOS = new ArrayList<>();
 
@@ -64,13 +80,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> searchCloths(String name) {
-        return null;
+    public Page<ProductDTO> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findAll(pageable).map(i-> modelMapper.map(i, ProductDTO.class));
     }
 
     @Override
-    public List<ProductDTO> getClothsByType(String type) {
-        return null;
+    public Page<ProductDTO> findByType(String type, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findByType(type,pageable).map(i-> modelMapper.map(i, ProductDTO.class));
     }
 
     @Override
@@ -101,10 +119,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void saveComment(CommentRequestModel requestModel) {
+    public void saveComment(CommentRequestModel requestModel, String userid, String auth) {
+        UserRest userRest = userClient.getCustomerById(userid, auth);
 
         CommentEntity comment = new CommentEntity();
-        comment.setUserPublicId(requestModel.getUserPublicId());
+        comment.setEmail(userRest.getEmail());
+        comment.setUserId(userid);
+        comment.setPic(userRest.getProfilePic());
         comment.setComment(requestModel.getComment());
 
         ProductEntity cloth = productRepository.findByProductId(requestModel.getClothPublicId());
@@ -127,14 +148,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO insertCloth(ClothRequestModel clothRequestModel) {
+    public ProductDTO insertProduct(ClothRequestModel clothRequestModel) {
         ProductEntity cloth = modelMapper.map(clothRequestModel, ProductEntity.class);
         ProductEntity saved = productRepository.save(cloth);
         return modelMapper.map(saved, ProductDTO.class);
     }
 
     @Override
-    public void saveCloth(ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception {
+    public void saveProduct(ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception {
         List<String> images = new ArrayList<>();
 
         ProductEntity cloth = modelMapper.map(clothRequestModel, ProductEntity.class);
@@ -168,7 +189,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void saveCloth(String productId, ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception {
+    public void saveProduct(String productId, ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception {
         ProductEntity existingCloth = productRepository.findByProductId(productId);
 
         if(clothRequestModel.getDescription() != null)
@@ -231,7 +252,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteCloth(String productId) throws Exception {
+    public void deleteProduct(String productId) throws Exception {
         ProductEntity existingCloth = productRepository.findByProductId(productId);
         if(existingCloth != null)
             productRepository.delete(existingCloth);

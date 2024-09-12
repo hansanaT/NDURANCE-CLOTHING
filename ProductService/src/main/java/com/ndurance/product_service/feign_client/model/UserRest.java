@@ -11,6 +11,15 @@ public class UserRest {
 	private String email;
 	private List<AddressesRest> addresses;
 	private int defaultAddress;
+	private String profilePic;
+
+	public String getProfilePic() {
+		return profilePic;
+	}
+
+	public void setProfilePic(String profilePic) {
+		this.profilePic = profilePic;
+	}
 
 	public int getDefaultAddress() {
 		return defaultAddress;

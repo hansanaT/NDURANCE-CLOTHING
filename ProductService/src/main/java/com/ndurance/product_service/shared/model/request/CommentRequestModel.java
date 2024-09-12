@@ -7,6 +7,5 @@ import lombok.Setter;
 @Setter
 public class CommentRequestModel {
     private String comment;
-    private String userPublicId;
     private String clothPublicId;
 }

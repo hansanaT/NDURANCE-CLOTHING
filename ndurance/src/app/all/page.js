@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Resizer from "react-image-file-resizer";
+import Link from "next/link"; // Import Link for navigation
 import Navigation from "../navigation";
 
 const ProductsPage = () => {
@@ -15,22 +16,31 @@ const ProductsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [resizedImages, setResizedImages] = useState({});
+  
+  // Pagination states
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [size, setSize] = useState(6); // Adjust the size as needed
 
   const categories = [
     "TOPS", "BOTTOMS", "DRESSES", "OUTERWEAR", "FOOTWEAR", "ACCESSORIES",
     "UNDERGARMENTS", "ACTIVEWEAR", "SLEEPWEAR", "SWIMWEAR"
   ];
 
-  // Fetch products on component mount
+  // Fetch products on component mount and when page/size changes
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/product-service/products');
-        const productData = response.data;
+        const response = await axios.get(`http://localhost:8080/product-service/products`, {
+          params: { page, size }
+        });
+        const productData = response.data.content;
         setProducts(productData);
         setFilteredProducts(productData); // Initially, display all products
+        setTotalPages(response.data.totalPages); // Set total pages from the API
         resizeProductImages(productData); // Resize images for the initial load
       } catch (err) {
+        console.error(err);
         setError("Failed to fetch products.");
       } finally {
         setLoading(false);
@@ -38,123 +48,33 @@ const ProductsPage = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, [page, size]);
 
-  // Resize images
+  // Resize images function (as in your code)
   const resizeProductImages = (productData) => {
-    productData.forEach((product) => {
-      const imageUrl = `http://localhost:8080/product-service/products/images/${product.images[0]}`;
-      getOriginalImageSize(imageUrl).then((dimensions) => {
-        const { width, height } = dimensions;
-        let newMaxWidth = 300;
-        let newMaxHeight = 300;
-
-        if (width > 1500 || height > 1500) {
-          newMaxWidth = 600;
-          newMaxHeight = 600;
-        } else if (width > 1000 || height > 1000) {
-          newMaxWidth = 400;
-          newMaxHeight = 400;
-        } else if (width > 500 || height > 500) {
-          newMaxWidth = 300;
-          newMaxHeight = 300;
-        }
-
-        resizeFile(imageUrl, newMaxWidth, newMaxHeight).then((resizedImage) => {
-          setResizedImages((prev) => ({
-            ...prev,
-            [product.id]: resizedImage,
-          }));
-        });
-      });
-    });
+    // ... Your resizing logic here
   };
 
-  const getOriginalImageSize = (imageUrl) => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.src = imageUrl;
-      img.onload = () => {
-        resolve({ width: img.width, height: img.height });
-      };
-    });
+  // Handle the search input, category change, and price range change (as in your code)
+  const handleSearch = (e) => { /* ... */ };
+  const handleCategoryChange = (e) => { /* ... */ };
+  const handlePriceChange = (min, max) => { /* ... */ };
+
+  // Filtering logic (as in your code)
+  useEffect(() => { /* ... */ }, [searchTerm, selectedCategory, minPrice, maxPrice, products]);
+
+  // Pagination navigation handlers
+  const handleNextPage = () => {
+    if (page < totalPages - 1) {
+      setPage(page + 1);
+    }
   };
 
-  const resizeFile = (imageUrl, maxWidth, maxHeight) =>
-    new Promise(async (resolve, reject) => {
-      try {
-        const response = await fetch(imageUrl);
-        const blob = await response.blob();
-
-        Resizer.imageFileResizer(
-          blob,
-          maxWidth,
-          maxHeight,
-          "JPEG",
-          100,
-          0,
-          (uri) => {
-            resolve(uri);
-          },
-          "base64",
-          (err) => {
-            reject(err);
-          }
-        );
-      } catch (error) {
-        reject(error);
-      }
-    });
-
-  // Handle the search input
-  const handleSearch = (e) => {
-    const value = e.target.value.toLowerCase();
-    setSearchTerm(value);
+  const handlePreviousPage = () => {
+    if (page > 0) {
+      setPage(page - 1);
+    }
   };
-
-  // Handle category change
-  const handleCategoryChange = (e) => {
-    const category = e.target.value;
-    setSelectedCategory(category);
-  };
-
-  // Handle price range change
-  const handlePriceChange = (min, max) => {
-    setMinPrice(min);
-    setMaxPrice(max);
-  };
-
-  // Filtering products based on all criteria
-  useEffect(() => {
-    const applyFilters = () => {
-      let updatedList = [...products]; // Start with the full list of products
-
-      // Filter by search term
-      if (searchTerm) {
-        updatedList = updatedList.filter(
-          (product) =>
-            new RegExp(searchTerm, "i").test(product.name) ||
-            new RegExp(searchTerm, "i").test(product.description)
-        );
-      }
-
-      // Filter by category
-      if (selectedCategory) {
-        updatedList = updatedList.filter(
-          (product) => product.type.toUpperCase() === selectedCategory
-        );
-      }
-
-      // Filter by price range
-      updatedList = updatedList.filter(
-        (product) => product.price >= minPrice && product.price <= maxPrice
-      );
-
-      setFilteredProducts(updatedList);
-    };
-
-    applyFilters();
-  }, [searchTerm, selectedCategory, minPrice, maxPrice, products]);
 
   if (loading) return <p className="text-center text-lg">Loading products...</p>;
   if (error) return <p className="text-center text-lg text-red-500">{error}</p>;
@@ -213,19 +133,41 @@ const ProductsPage = () => {
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.map((product) => (
-            <div key={product.id} className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform hover:scale-105 duration-300">
+            <div key={product.productId} className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform hover:scale-105 duration-300">
               <img
-                src={resizedImages[product.id] || `http://localhost:8080/product-service/products/images/${product.images[0]}`}
+                src={resizedImages[product.productId] || `http://localhost:8080/product-service/products/images/${product.images[0]}`}
                 alt={product.name}
                 className="object-cover h-48 w-full"
               />
               <div className="p-4">
-                <h2 className="text-xl font-semibold mb-2 text-gray-800">{product.name}</h2>
+                <Link href={`/product/${product.productId}`}>
+                  <h2 className="text-xl font-semibold mb-2 text-gray-800 cursor-pointer hover:underline">
+                    {product.name}
+                  </h2>
+                </Link>
                 <p className="text-gray-600 mb-4">{product.description}</p>
                 <p className="text-green-500 text-lg font-bold mb-4">Price: ${product.price}</p>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Pagination Controls */}
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={handlePreviousPage}
+            className="mr-4 px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+            disabled={page === 0}
+          >
+            Previous
+          </button>
+          <button
+            onClick={handleNextPage}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+            disabled={page === totalPages - 1}
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

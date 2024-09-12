@@ -1,6 +1,8 @@
 package com.ndurance.product_service.repository;
 
 import com.ndurance.product_service.entity.ProductEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,4 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface ProductRepository extends CrudRepository<ProductEntity, Long> {
     ProductEntity findByProductId(String productId);
     void deleteByProductId(String productId);
+
+    Page<ProductEntity> findAll(Pageable pageable);
+    Page<ProductEntity> findByType(String type, Pageable pageable);
 }

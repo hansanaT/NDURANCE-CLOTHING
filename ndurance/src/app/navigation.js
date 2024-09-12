@@ -118,7 +118,7 @@ const Navigation = () => {
                         <Dropdown.Item>Wishlist</Dropdown.Item>
                         <DropdownItem href={"/user"}>User Profile</DropdownItem>
                         <Dropdown.Divider/>
-                        <Dropdown.Item>Sign out</Dropdown.Item>
+                        <Dropdown.Item href={"/signout"}>Sign out</Dropdown.Item>
                     </Dropdown>
                 )}
                 <div>
@@ -133,7 +133,7 @@ const Navigation = () => {
                         >
                             <DropdownItem href={"/login"}>Member Login</DropdownItem>
                             <DropdownDivider/>
-                            <DropdownItem href={"/emp"}>Staff Login</DropdownItem>
+                            <DropdownItem href={"/login"}>Staff Login</DropdownItem>
                         </Dropdown>
                     )}
                 </div>
