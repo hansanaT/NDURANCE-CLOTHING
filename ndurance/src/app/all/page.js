@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Resizer from "react-image-file-resizer";
-import Link from "next/link"; // Import Link for navigation
+import Link from "next/link"; 
 import Navigation from "../navigation";
 
 const ProductsPage = () => {
@@ -16,18 +15,16 @@ const ProductsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [resizedImages, setResizedImages] = useState({});
-  
-  // Pagination states
+
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [size, setSize] = useState(6); // Adjust the size as needed
+  const [size, setSize] = useState(6);
 
   const categories = [
     "TOPS", "BOTTOMS", "DRESSES", "OUTERWEAR", "FOOTWEAR", "ACCESSORIES",
     "UNDERGARMENTS", "ACTIVEWEAR", "SLEEPWEAR", "SWIMWEAR"
   ];
 
-  // Fetch products on component mount and when page/size changes
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -36,9 +33,9 @@ const ProductsPage = () => {
         });
         const productData = response.data.content;
         setProducts(productData);
-        setFilteredProducts(productData); // Initially, display all products
-        setTotalPages(response.data.totalPages); // Set total pages from the API
-        resizeProductImages(productData); // Resize images for the initial load
+        setFilteredProducts(productData); 
+        setTotalPages(response.data.totalPages); 
+       
       } catch (err) {
         console.error(err);
         setError("Failed to fetch products.");
@@ -50,20 +47,49 @@ const ProductsPage = () => {
     fetchProducts();
   }, [page, size]);
 
-  // Resize images function (as in your code)
-  const resizeProductImages = (productData) => {
-    // ... Your resizing logic here
+  const handleSearch = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchTerm(value);
   };
 
-  // Handle the search input, category change, and price range change (as in your code)
-  const handleSearch = (e) => { /* ... */ };
-  const handleCategoryChange = (e) => { /* ... */ };
-  const handlePriceChange = (min, max) => { /* ... */ };
+  const handleCategoryChange = (e) => {
+    const category = e.target.value;
+    setSelectedCategory(category);
+  };
 
-  // Filtering logic (as in your code)
-  useEffect(() => { /* ... */ }, [searchTerm, selectedCategory, minPrice, maxPrice, products]);
+  const handlePriceChange = (min, max) => {
+    setMinPrice(min);
+    setMaxPrice(max);
+  };
 
-  // Pagination navigation handlers
+  useEffect(() => {
+    const applyFilters = () => {
+      let updatedList = [...products];
+
+      if (searchTerm) {
+        updatedList = updatedList.filter(
+          (product) =>
+            new RegExp(searchTerm, "i").test(product.name) ||
+            new RegExp(searchTerm, "i").test(product.description)
+        );
+      }
+
+      if (selectedCategory) {
+        updatedList = updatedList.filter(
+          (product) => product.type.toUpperCase() === selectedCategory
+        );
+      }
+
+      updatedList = updatedList.filter(
+        (product) => product.price >= minPrice && product.price <= maxPrice
+      );
+
+      setFilteredProducts(updatedList);
+    };
+
+    applyFilters();
+  }, [searchTerm, selectedCategory, minPrice, maxPrice, products]);
+
   const handleNextPage = () => {
     if (page < totalPages - 1) {
       setPage(page + 1);
@@ -85,7 +111,6 @@ const ProductsPage = () => {
       <div className="container mx-auto py-8">
         <h1 className="text-4xl font-bold text-center mb-6">Products</h1>
 
-        {/* Search Bar */}
         <div className="mb-6 flex justify-center">
           <input
             type="text"
@@ -96,7 +121,6 @@ const ProductsPage = () => {
           />
         </div>
 
-        {/* Category Filter */}
         <div className="mb-6 flex justify-center">
           <select
             value={selectedCategory}
@@ -112,7 +136,6 @@ const ProductsPage = () => {
           </select>
         </div>
 
-        {/* Price Range */}
         <div className="mb-6 flex justify-center gap-4">
           <input
             type="number"
@@ -130,7 +153,6 @@ const ProductsPage = () => {
           />
         </div>
 
-        {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.map((product) => (
             <div key={product.productId} className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform hover:scale-105 duration-300">
@@ -152,7 +174,6 @@ const ProductsPage = () => {
           ))}
         </div>
 
-        {/* Pagination Controls */}
         <div className="flex justify-center mt-6">
           <button
             onClick={handlePreviousPage}

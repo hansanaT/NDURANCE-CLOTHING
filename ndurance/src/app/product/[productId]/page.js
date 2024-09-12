@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Navigation from "@/app/navigation";
 import Cookies from 'js-cookie'; // Import js-cookie for cookies
+import axios from "axios";
 
 const ProductPage = ({ params }) => {
   const { productId } = params;
@@ -12,6 +13,34 @@ const ProductPage = ({ params }) => {
   const [error, setError] = useState(null);
   const [newComment, setNewComment] = useState('');
   const [commentSuccess, setCommentSuccess] = useState(false);
+  const [userDetails, setUserDetails] = useState({});
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const user = async () => {
+    const token = Cookies.get('jwt');
+    const userId = Cookies.get('userId');
+
+    if (!token || !userId) {
+      setError('User not authenticated');
+      return;
+    }
+
+    try {
+      const response = await axios.get(`http://localhost:8080/user-service/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setUserDetails(response.data);
+      setIsAdmin(response.data.roles.includes('ROLE_ADMIN'));
+    } catch (err) {
+      setError('Failed to fetch user details');
+    }
+  };
+
+  useEffect(() => {
+    user();
+  }, []);
 
   useEffect(() => {
     if (productId) {
@@ -37,8 +66,8 @@ const ProductPage = ({ params }) => {
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
 
-    const token = Cookies.get('jwt'); // Get the token from cookies
-    const userId = Cookies.get('userId'); // Get the userId from cookies
+    const token = Cookies.get('jwt');
+    const userId = Cookies.get('userId');
 
     if (!token || !userId) {
       setError('User not authenticated');
@@ -50,24 +79,54 @@ const ProductPage = ({ params }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // Include token in Authorization header
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           comment: newComment,
           clothPublicId: productId,
         }),
       });
-      
+
       if (!res.ok) {
         throw new Error('Failed to post comment');
       }
 
       setNewComment('');
-      setCommentSuccess(true); // Show success message
+      setCommentSuccess(true);
       fetchProduct(); // Refresh product data
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const handleDeleteProduct = async () => {
+    const token = Cookies.get('jwt');
+
+    if (!token) {
+      setError('User not authenticated');
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:8080/product-service/products/${productId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      console.log(res)
+      if (!res.ok) {
+        throw new Error('Failed to delete product');
+      }
+
+      alert('Product deleted successfully');
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleUpdateProduct = () => {
+    window.location.href = `/update-product/${productId}`;
   };
 
   if (loading) return <p>Loading...</p>;
@@ -95,6 +154,23 @@ const ProductPage = ({ params }) => {
             <p className="text-lg mt-4">{product.description}</p>
             <p className="text-2xl font-semibold mt-2">Price: ${product.price}</p>
             <p className="text-lg text-gray-600 mt-2">Category: {product.type}</p>
+
+            {isAdmin && (
+              <div className="mt-6">
+                <button
+                  onClick={handleUpdateProduct}
+                  className="bg-yellow-500 text-white px-4 py-2 rounded-lg mr-2"
+                >
+                  Update Product
+                </button>
+                <button
+                  onClick={handleDeleteProduct}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                >
+                  Delete Product
+                </button>
+              </div>
+            )}
 
             <h3 className="text-2xl mt-8">Comments</h3>
             <div className="mt-4 space-y-4">

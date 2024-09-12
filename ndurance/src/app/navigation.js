@@ -30,6 +30,10 @@ const Navigation = () => {
         const token = Cookies.get('jwt');
         const userId = Cookies.get('userId');
 
+        if (!token || !userId) {
+            return;
+        }
+
         const user =  await axios.get(`http://localhost:8080/user-service/users/${userId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -43,7 +47,8 @@ const Navigation = () => {
         const jwtExists = document.cookie.split('; ').find((row) => row.startsWith('jwt='));
 
         user().then((response) => {
-            setUserDetails(response.data);
+            if(response)
+                setUserDetails(response.data);
         });
 
         if (jwtExists) {

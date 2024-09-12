@@ -19,6 +19,6 @@ public class ProductEntity {
     private ProductType type;
     private List<String> images;
     private int price;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<CommentEntity> comments;
 }

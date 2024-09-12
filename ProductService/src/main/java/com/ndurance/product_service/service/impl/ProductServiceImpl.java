@@ -255,9 +255,16 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(String productId) throws Exception {
         ProductEntity existingCloth = productRepository.findByProductId(productId);
         if(existingCloth != null)
-            productRepository.delete(existingCloth);
-        else
+        {
+            existingCloth.getComments().forEach(commentEntity -> {
+                commentRepository.deleteById(commentEntity.getId());
+            });
+            existingCloth.getComments().clear();
+            productRepository.deleteById(existingCloth.getId());
+        }
+        else{
             throw new ProductNotFoundServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+        }
     }
 }
 

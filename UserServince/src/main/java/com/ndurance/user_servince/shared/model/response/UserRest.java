@@ -1,5 +1,6 @@
 package com.ndurance.user_servince.shared.model.response;
 
+import java.util.Collection;
 import java.util.List;
 
 public class UserRest {
@@ -9,6 +10,25 @@ public class UserRest {
 	private String email;
 	private List<AddressesRest> addresses;
 	private String profilePic;
+	private Collection<String> roles;
+
+	public Collection<String> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Collection<String> roles) {
+		this.roles = roles;
+	}
+
+	public Collection<String> getAuthorities() {
+		return Authorities;
+	}
+
+	public void setAuthorities(Collection<String> authorities) {
+		Authorities = authorities;
+	}
+
+	private Collection<String> Authorities;
 
 	public String getProfilePic() {
 		return profilePic;

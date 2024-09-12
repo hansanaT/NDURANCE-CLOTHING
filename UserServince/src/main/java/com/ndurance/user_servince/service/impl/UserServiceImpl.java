@@ -149,7 +149,20 @@ public class UserServiceImpl implements UserService {
 		if (userEntity == null)
 			throw new UsernameNotFoundException("User with ID: " + userId + " not found");
 
-		return modelMapper.map(userEntity, UserDto.class);
+		UserDto userDto = modelMapper.map(userEntity, UserDto.class);
+		List<String> roles = new ArrayList<>();
+		List<String> auths = new ArrayList<>();
+
+		userEntity.getRoles().forEach(roleEntity -> {
+			roles.add(roleEntity.getName());
+			roleEntity.getAuthorities().forEach(authorityEntity -> {
+				auths.add(authorityEntity.getName());
+			});
+		});
+
+		userDto.setAuthorities(auths);
+		userDto.setRoles(roles);
+		return userDto;
 	}
 
 	@Override

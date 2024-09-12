@@ -126,7 +126,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{productId}")
-    public void deleteMapping(@PathVariable String productId) throws Exception {
+    public void deleteProduct(@PathVariable String productId) throws Exception {
         productService.deleteProduct(productId);
     }
 

@@ -3,13 +3,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
 import Navigation from "../navigation";
 
 const UserSettings = ({ user, edit }) => {
     const [userDetails, setUserDetails] = useState({});
     const [imageSrc, setImageSrc] = useState(null);
-    const router = useRouter();
+    const [error, setError] = useState(null);
 
     const [userInfo, setUserInfo] = useState({
         firstName: '',
@@ -29,6 +28,11 @@ const UserSettings = ({ user, edit }) => {
             const token = Cookies.get("jwt");
             const userId = Cookies.get("userId");
 
+            if (!token || !userId) {
+                setError('User not authenticated');
+                return;
+            }
+            
             try {
                 const user = await axios.get(
                     `http://localhost:8080/user-service/users/${userId}`,
@@ -52,7 +56,7 @@ const UserSettings = ({ user, edit }) => {
                     confirmPassword: "",
                 })
             } catch (error) {
-                console.error("Error fetching user details:", error);
+                setError('Failed to fetch user details');
             }
         };
 
@@ -71,7 +75,7 @@ const UserSettings = ({ user, edit }) => {
                 const imageUrl = URL.createObjectURL(response.data);
                 setImageSrc(imageUrl);
             } catch (error) {
-                console.error("Error fetching user profile picture:", error);
+               // setError(`Error fetching user profile picture: , ${error}`);
             }
         };
 
@@ -91,7 +95,7 @@ const UserSettings = ({ user, edit }) => {
         const userId = Cookies.get("userId");
         const token = Cookies.get("jwt");
 
-        console.log(passwords);
+        alert(passwords);
         try {
             await axios.post(
                 `http://localhost:8080/user-service/users/reset-password/${userId}`,
@@ -103,9 +107,9 @@ const UserSettings = ({ user, edit }) => {
                     },
                 }
             );
-            console.log("User details updated successfully");
+            alert("User details updated successfully");
         } catch (error) {
-            console.error("Error updating user details:", error);
+            setError(`Error updating user details: , ${error}`);
         }
     }
 
@@ -128,12 +132,12 @@ const UserSettings = ({ user, edit }) => {
                 }
             )
                 .then(response => {
-                    console.log("Profile picture updated successfully");
+                    alert("Profile picture updated successfully");
                     const imageUrl = URL.createObjectURL(file);
                     setImageSrc(imageUrl);
                 })
                 .catch(error => {
-                    console.error("Error uploading profile picture:", error);
+                    setError(`Error uploading profile picture: ${error}`);
                 });
         }
     };
@@ -154,12 +158,14 @@ const UserSettings = ({ user, edit }) => {
                     },
                 }
             );
-            console.log("User details updated successfully");
+            alert("User details updated successfully");
         } catch (error) {
-            console.error("Error updating user details:", error);
+            setError(`Error updating user details: ${error}`);
         }
     };
 
+    if (error) return <p>Error: {error}</p>;
+    
     return (
         <div>
             <Navigation />
