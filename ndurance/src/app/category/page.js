@@ -6,17 +6,20 @@ import {useRouter} from "next/navigation";
 export default function CategoryHome() {
 
     const router = useRouter();
-    const navigateToTops = () => {
-        router.push('/category/Tops');
+    const navigateToHats = () => {
+        router.push('/category/hats');
     }
-    const navigateToBottoms = () => {
-        router.push('/category/Bottoms');
-    }
-    const navigateToDersses = () => {
-        router.push('/category/Dresses');
+    const navigateToFootwear = () => {
+        router.push('/category/footwear');
     }
     const navigateToOuterwear = () => {
-        router.push('/category/Outerwear');
+        router.push('/category/outerwear');
+    }
+    const navigateToWomens = () => {
+        router.push('/category/womens');
+    }
+    const navigateToMens = () => {
+        router.push('/category/mens');
     }
 
     return (
@@ -37,7 +40,7 @@ export default function CategoryHome() {
                                          src="https://i.ibb.co/ThPFmzv/omid-armin-m-VSb6-PFk-VXw-unsplash-1-1.png"
                                          alt="girl-image"/>
                                     <button
-                                        onClick={navigateToTops}
+                                        onClick={navigateToWomens}
                                         className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 bottom-4 z-10 absolute text-base font-medium leading-none text-gray-800 py-3 w-36 bg-white">
                                         Women
                                     </button>
@@ -50,7 +53,7 @@ export default function CategoryHome() {
                                              src="https://img.freepik.com/premium-photo/shoe-running-line-icon-ai-generated_1185057-4514.jpg?w=826"
                                              alt="shoe-image"/>
                                         <button
-                                            onClick={navigateToDersses}
+                                            onClick={navigateToFootwear}
                                             className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 bottom-4 z-10 absolute text-base font-medium leading-none text-gray-800 py-3 w-36 bg-white">
                                             Sneakers
                                         </button>
@@ -62,7 +65,7 @@ export default function CategoryHome() {
                                              src="https://i.ibb.co/DQDpbYc/fedora-hats-studio-still-life.jpg"
                                              alt="watch-image"/>
                                         <button
-                                            onClick={navigateToOuterwear}
+                                            onClick={navigateToHats}
                                             className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 bottom-4 z-10 absolute text-base font-medium leading-none text-gray-800 py-3 w-36 bg-white">
                                             Hats
                                         </button>
@@ -76,7 +79,7 @@ export default function CategoryHome() {
                                          src="https://i.ibb.co/3pjQp9B/full-body-studio-portrait-stylish-bearded-male-dressed-suit-sunglasses-dark-grey-background.jpg"
                                          alt="girl-image"/>
                                     <button
-                                        onClick={navigateToBottoms}
+                                        onClick={navigateToMens}
                                         className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 bottom-4 z-10 absolute text-base font-medium leading-none text-gray-800 py-3 w-36 bg-white">
                                         Mens
                                     </button>
@@ -92,7 +95,7 @@ export default function CategoryHome() {
                                          src="https://i.ibb.co/3pjQp9B/full-body-studio-portrait-stylish-bearded-male-dressed-suit-sunglasses-dark-grey-background.jpg"
                                          alt="olive-tatiane-Im-Ez-F9-B91-Mk-unsplash-2"/>
                                     <button
-                                        onClick={navigateToBottoms}
+                                        onClick={navigateToMens}
                                         className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 bottom-4 z-10 absolute text-base font-medium leading-none text-gray-800 py-3 w-36 bg-white">
                                         Mens
                                     </button>
@@ -109,7 +112,7 @@ export default function CategoryHome() {
                                      src="https://i.ibb.co/3pjQp9B/full-body-studio-portrait-stylish-bearded-male-dressed-suit-sunglasses-dark-grey-background.jpg"
                                      alt="olive-tatiane-Im-Ez-F9-B91-Mk-unsplash-2"/>
                                 <button
-                                    onClick={navigateToBottoms}
+                                    onClick={navigateToMens}
                                     className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 bottom-4 z-10 absolute text-base font-medium leading-none text-gray-800 py-3 w-36 bg-white">
                                     Mens
                                 </button>

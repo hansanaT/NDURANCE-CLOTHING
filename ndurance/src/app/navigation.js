@@ -7,6 +7,7 @@ import {Avatar, Button, Dropdown, DropdownDivider, DropdownItem, Navbar,} from "
 import styled from "styled-components";
 import Cookies from 'js-cookie';
 import axios from "axios";
+import{useRouter} from "next/navigation";
 
 const StyledText = styled.h1`
         font-family: 'Inconsolata', sans-serif;
@@ -19,6 +20,7 @@ const Navigation = () => {
     const[isSignIn, setIsSignIn] = useState(true);
     const [userDetails, setUserDetails] = useState({});
     const [imageSrc, setImageSrc] = useState(null);
+    const router = useRouter();
 
     const user = async ()=>{
         const token = Cookies.get('jwt');
@@ -77,6 +79,14 @@ const Navigation = () => {
         fetchUserProfilePicture();
     }, [userDetails]);
 
+    const handleSignOut = () => {
+        Cookies.remove('jwt');
+        Cookies.remove('userId');
+        setIsAuthenticated(false);
+        setIsSignIn(true);
+        router.refresh();
+    }
+
     return (
         <Navbar fluid rounded>
             <Navbar.Brand href="https://localhost:3000/">
@@ -114,7 +124,7 @@ const Navigation = () => {
                         <Dropdown.Item>Wishlist</Dropdown.Item>
                         <DropdownItem href={"/user"}>User Profile</DropdownItem>
                         <Dropdown.Divider/>
-                        <Dropdown.Item href={"/signout"}>Sign out</Dropdown.Item>
+                        <Dropdown.Item onClick={handleSignOut}>Sign out</Dropdown.Item>
                     </Dropdown>
                 )}
                 <div>

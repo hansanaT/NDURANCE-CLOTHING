@@ -1,9 +1,12 @@
 import Navigation from "@/app/navigation";
-import SHOP_DATA from "@/shopData";
+import axios from "axios";
 
-export default function Category ({params}) {
+export default async function Category({params}) {
     const name = params.name.charAt(0).toUpperCase() + params.name.slice(1);
-    const categoryData = SHOP_DATA.find((data) => data.name.toLowerCase() === name.toLowerCase());
+    // const categoryData = SHOP_DATA.find((data) => data.name.toLowerCase() === name.toLowerCase());
+
+    const res = await axios.get(`http://localhost:3000/product-service/products`);
+    const catTypes = res.data.content.map((product) => product.type === name.toUpperCase());
 
     return (
         <div>
@@ -89,13 +92,13 @@ export default function Category ({params}) {
                     </div>
                     {/*Cards Start*/}
                     <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
-                        {categoryData.items.map((item) => (
-                            <div key={item.id}
-                                className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                        {catTypes((item) => (
+                            <div key={item.productId}
+                                 className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                                 <div className="h-56 w-full">
-                                    <a href={`/category/${name.toLowerCase()}/${item.name.toLowerCase().replace(/ /g, '-')}`}>
+                                    <a href={`/category/${name.toUpperCase()}/${item.name.toLowerCase().replace(/ /g, '-')}`}>
                                         <img className="mx-auto h-full dark:hidden"
-                                             src={item.imageUrl}
+                                             src={item.images[0].url}
                                              alt=""/>
                                     </a>
                                 </div>
@@ -109,7 +112,8 @@ export default function Category ({params}) {
                                                     className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                                                 <span className="sr-only"> Quick look </span>
                                                 <svg className="h-5 w-5" aria-hidden="true"
-                                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                     fill="none"
                                                      viewBox="0 0 24 24">
                                                     <path stroke="currentColor" strokeWidth="2"
                                                           d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>
@@ -149,31 +153,36 @@ export default function Category ({params}) {
                                     <div className="mt-2 flex items-center gap-2">
                                         <div className="flex items-center">
                                             <svg className="h-4 w-4 text-yellow-400" aria-hidden="true"
-                                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                 viewBox="0 0 24 24">
                                                 <path
                                                     d="M13.8 4.2a2 2 0 0 0-3.6 0L8.4 8.4l-4.6.3a2 2 0 0 0-1.1 3.5l3.5 3-1 4.4c-.5 1.7 1.4 3 2.9 2.1l3.9-2.3 3.9 2.3c1.5 1 3.4-.4 3-2.1l-1-4.4 3.4-3a2 2 0 0 0-1.1-3.5l-4.6-.3-1.8-4.2Z"/>
                                             </svg>
 
                                             <svg className="h-4 w-4 text-yellow-400" aria-hidden="true"
-                                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                 viewBox="0 0 24 24">
                                                 <path
                                                     d="M13.8 4.2a2 2 0 0 0-3.6 0L8.4 8.4l-4.6.3a2 2 0 0 0-1.1 3.5l3.5 3-1 4.4c-.5 1.7 1.4 3 2.9 2.1l3.9-2.3 3.9 2.3c1.5 1 3.4-.4 3-2.1l-1-4.4 3.4-3a2 2 0 0 0-1.1-3.5l-4.6-.3-1.8-4.2Z"/>
                                             </svg>
 
                                             <svg className="h-4 w-4 text-yellow-400" aria-hidden="true"
-                                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                 viewBox="0 0 24 24">
                                                 <path
                                                     d="M13.8 4.2a2 2 0 0 0-3.6 0L8.4 8.4l-4.6.3a2 2 0 0 0-1.1 3.5l3.5 3-1 4.4c-.5 1.7 1.4 3 2.9 2.1l3.9-2.3 3.9 2.3c1.5 1 3.4-.4 3-2.1l-1-4.4 3.4-3a2 2 0 0 0-1.1-3.5l-4.6-.3-1.8-4.2Z"/>
                                             </svg>
 
                                             <svg className="h-4 w-4 text-yellow-400" aria-hidden="true"
-                                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                 viewBox="0 0 24 24">
                                                 <path
                                                     d="M13.8 4.2a2 2 0 0 0-3.6 0L8.4 8.4l-4.6.3a2 2 0 0 0-1.1 3.5l3.5 3-1 4.4c-.5 1.7 1.4 3 2.9 2.1l3.9-2.3 3.9 2.3c1.5 1 3.4-.4 3-2.1l-1-4.4 3.4-3a2 2 0 0 0-1.1-3.5l-4.6-.3-1.8-4.2Z"/>
                                             </svg>
 
                                             <svg className="h-4 w-4 text-yellow-400" aria-hidden="true"
-                                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                 viewBox="0 0 24 24">
                                                 <path
                                                     d="M13.8 4.2a2 2 0 0 0-3.6 0L8.4 8.4l-4.6.3a2 2 0 0 0-1.1 3.5l3.5 3-1 4.4c-.5 1.7 1.4 3 2.9 2.1l3.9-2.3 3.9 2.3c1.5 1 3.4-.4 3-2.1l-1-4.4 3.4-3a2 2 0 0 0-1.1-3.5l-4.6-.3-1.8-4.2Z"/>
                                             </svg>
