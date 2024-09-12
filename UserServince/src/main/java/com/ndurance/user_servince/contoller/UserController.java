@@ -1,15 +1,14 @@
 package com.ndurance.user_servince.contoller;
 
+import com.ndurance.user_servince.exceptions.UserUnAuthorizedServiceException;
 import com.ndurance.user_servince.shared.model.request.UserDetailsRequestModel;
-import com.ndurance.user_servince.shared.model.response.RequestOperationStatus;
+import com.ndurance.user_servince.shared.model.request.UserPasswordReset;
+import com.ndurance.user_servince.shared.model.response.*;
 import com.ndurance.user_servince.service.AddressService;
 import com.ndurance.user_servince.service.UserService;
 import com.ndurance.user_servince.shared.Roles;
 import com.ndurance.user_servince.shared.dto.AddressDTO;
 import com.ndurance.user_servince.shared.dto.UserDto;
-import com.ndurance.user_servince.shared.model.response.AddressesRest;
-import com.ndurance.user_servince.shared.model.response.OperationStatusModel;
-import com.ndurance.user_servince.shared.model.response.UserRest;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
@@ -21,15 +20,14 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/users")
@@ -43,7 +41,7 @@ public class UserController {
 
 	@Autowired
 	AddressService addressesService;
- 
+
 	@GetMapping(path = "/{userid}")
 	public UserRest getUser(@PathVariable String userid) {
 		UserDto userDto = userService.getUserByUserId(userid);
@@ -161,7 +159,18 @@ public class UserController {
 		return EntityModel.of(returnValue, Arrays.asList(userLink,userAddressesLink, selfLink));
 	}
 
-	@GetMapping("/img/{userid}")
+	@PostMapping("/reset-password/{userId}")
+	public void resetPassWord(@RequestBody UserPasswordReset userPasswordReset, @PathVariable String userId){
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String username = authentication.getName();
+		if(!Objects.equals(username, userId))
+			throw new UserUnAuthorizedServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
+
+		userService.resetPassWord(userPasswordReset);
+	}
+
+	@GetMapping("/image/{userid}")
 	public ResponseEntity<Resource> getImage(@PathVariable String userid) {
 		try {
 			Resource resource = userService.getImage(userid);

@@ -10,5 +10,8 @@ public enum ProductType {
 	UNDERGARMENTS,
 	ACTIVEWEAR,
 	SLEEPWEAR,
-	SWIMWEAR
+	SWIMWEAR,
+	HATS,
+	WOMENS,
+	MENS,
 }

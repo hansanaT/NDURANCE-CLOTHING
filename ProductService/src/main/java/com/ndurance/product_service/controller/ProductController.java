@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,6 +44,8 @@ public class ProductController {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
+        System.out.println("userid " +userid);
+        System.out.println("username " +username);
         if(!Objects.equals(username, userid))
             throw new ProductUnAuthorizedServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
 
@@ -57,7 +58,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public void insertCloth(@RequestParam("name") String name, @RequestParam("description") String description, @RequestParam("images") List<MultipartFile> files,
+    public void insertProduct(@RequestParam("name") String name, @RequestParam("description") String description, @RequestParam("images") List<MultipartFile> files,
                             @RequestParam("type") String type, @RequestParam("price") String price) throws Exception {
 
         ClothRequestModel clothRequestModel = new ClothRequestModel();
@@ -68,12 +69,12 @@ public class ProductController {
         clothRequestModel.setType(ProductType.valueOf(type));
         clothRequestModel.setName(name);
         clothRequestModel.setPrice(Integer.parseInt(price));
-        productService.saveCloth(clothRequestModel, files);
+        productService.saveProduct(clothRequestModel, files);
 
     }
 
     @PutMapping("/{productId}")
-    public void updateCloth(@PathVariable String productId, @RequestParam(value = "name", required = false) String name, @RequestParam(value = "description", required = false) String description,
+    public void updateProduct(@PathVariable String productId, @RequestParam(value = "name", required = false) String name, @RequestParam(value = "description", required = false) String description,
                             @RequestParam(value = "images", required = false) List<MultipartFile> files, @RequestParam(value = "price", required = false) String price ,
                             @RequestParam(value = "type", required = false) String type) throws Exception {
 
@@ -90,7 +91,7 @@ public class ProductController {
         if(price != null){
             clothRequestModel.setPrice(Integer.parseInt(price));
         }
-        productService.saveCloth(productId,clothRequestModel, files);
+        productService.saveProduct(productId,clothRequestModel, files);
 
     }
 
@@ -116,23 +117,22 @@ public class ProductController {
 
 
     @GetMapping("/{productId}")
-    public ProductRest getCloth(@PathVariable String productId){
-        ProductDTO cloth = productService.getCloth(productId);
-        return modelMapper.map(cloth, ProductRest.class);
+    public ProductDTO getProduct(@PathVariable String productId){
+        return productService.getProduct(productId);
     }
 
     @DeleteMapping("/{productId}")
-    public void deleteMapping(@PathVariable String productId) throws Exception {
-        productService.deleteCloth(productId);
+    public void deleteProduct(@PathVariable String productId) throws Exception {
+        productService.deleteProduct(productId);
     }
 
     @GetMapping
-    public Page<ProductRest> getAllCloths(@RequestParam(name = "page", defaultValue="0") int page, @RequestParam(name="size", defaultValue = "20") int size){
+    public Page<ProductRest> getAllProducts(@RequestParam(name = "page", defaultValue="0") int page, @RequestParam(name="size", defaultValue = "20") int size){
         return productService.findAll(page,size).map(i-> modelMapper.map(i, ProductRest.class));
     }
 
     @GetMapping("/byType")
-    public Page<ProductRest> getAllCloths(@RequestParam ProductType type, @RequestParam(name = "page", defaultValue="0") int page, @RequestParam(name="size", defaultValue = "20") int size){
+    public Page<ProductRest> getAllProducts(@RequestParam ProductType type, @RequestParam(name = "page", defaultValue="0") int page, @RequestParam(name="size", defaultValue = "20") int size){
         return productService.findByType(type, page,size).map(i-> modelMapper.map(i, ProductRest.class));
     }
 }

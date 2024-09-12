@@ -13,6 +13,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -75,6 +77,25 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         UserServiceImpl userService = (UserServiceImpl) SpringApplicationContext.getBean("userServiceImpl");
         UserEntity userEntity = userService.getUserByE(userName);
+
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", encryptToken)
+                .httpOnly(false) //if set to true, js can't access
+                .secure(true)     // Cookie is sent only over HTTPS
+                .path("/")        // Cookie is valid for the entire domain
+                .maxAge(7 * 24 * 60 * 60)  // Cookie expires in 7 days
+                .sameSite("None") // Sends the cookie on cross-site requests
+                .build();
+
+        ResponseCookie userIdCookie = ResponseCookie.from("userId", userEntity.getUserId())
+                .httpOnly(false) //if set to true, js can't access
+                .secure(true)     // Cookie is sent only over HTTPS
+                .path("/")        // Cookie is valid for the entire domain
+                .maxAge(7 * 24 * 60 * 60)  // Cookie expires in 7 days
+                .sameSite("None") // Sends the cookie on cross-site requests
+                .build();
+
+        res.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+        res.addHeader(HttpHeaders.SET_COOKIE, userIdCookie.toString());
 
         res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + encryptToken);
         res.addHeader("UserID", userEntity.getUserId());

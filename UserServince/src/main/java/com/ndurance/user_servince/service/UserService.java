@@ -2,6 +2,7 @@ package com.ndurance.user_servince.service;
 
 import com.ndurance.user_servince.entity.UserEntity;
 import com.ndurance.user_servince.shared.dto.UserDto;
+import com.ndurance.user_servince.shared.model.request.UserPasswordReset;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,4 +25,5 @@ public interface UserService extends UserDetailsService{
 	Resource loadImageAsResource(String imageName) throws MalformedURLException;
 	UserEntity getUserByE(String email);
 	Resource getImage(String userId) throws MalformedURLException;
+	void resetPassWord(UserPasswordReset userPasswordReset);
 }

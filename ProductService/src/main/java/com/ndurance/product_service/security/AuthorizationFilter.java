@@ -58,9 +58,8 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
         TokenConverter tokenConverter = (TokenConverter) SpringApplicationContext.getBean("tokenConverter");
         String token = tokenConverter.decryptToken(signedToken);
         UserRest user = tokenConverter.validateTokenSignature(token, request);
-
         if(user != null){
-            return new UsernamePasswordAuthenticationToken(user.getEmail(), null, user.getAuthorities());
+            return new UsernamePasswordAuthenticationToken(user.getUserId(), null, user.getAuthorities());
 
         }else {
             return null;

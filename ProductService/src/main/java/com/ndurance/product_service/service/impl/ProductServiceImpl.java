@@ -53,11 +53,19 @@ public class ProductServiceImpl implements ProductService {
     private final Path fileStorageLocation = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize();
 
     @Override
-    public ProductDTO getCloth(String productId) {
+    public ProductDTO getProduct(String productId) {
         ProductEntity productEntity = productRepository.findByProductId(productId);
         if(productEntity == null)
             throw new ProductNotFoundServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
-        return modelMapper.map(productEntity, ProductDTO.class);
+
+        List<CommentDTO> commentDTOS = new ArrayList<>();
+
+        ProductDTO productDTO = modelMapper.map(productEntity, ProductDTO.class);
+        productDTO.getComments().forEach(i->{
+            commentDTOS.add(modelMapper.map(i, CommentDTO.class));
+        });
+        productDTO.setComments(commentDTOS);
+        return productDTO;
     }
 
     @Override
@@ -142,14 +150,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO insertCloth(ClothRequestModel clothRequestModel) {
+    public ProductDTO insertProduct(ClothRequestModel clothRequestModel) {
         ProductEntity cloth = modelMapper.map(clothRequestModel, ProductEntity.class);
         ProductEntity saved = productRepository.save(cloth);
         return modelMapper.map(saved, ProductDTO.class);
     }
 
     @Override
-    public void saveCloth(ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception {
+    public void saveProduct(ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception {
         List<String> images = new ArrayList<>();
 
         ProductEntity cloth = modelMapper.map(clothRequestModel, ProductEntity.class);
@@ -183,7 +191,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void saveCloth(String productId, ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception {
+    public void saveProduct(String productId, ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception {
         ProductEntity existingCloth = productRepository.findByProductId(productId);
 
         if(clothRequestModel.getDescription() != null)
@@ -246,7 +254,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteCloth(String productId) throws Exception {
+    public void deleteProduct(String productId) throws Exception {
         ProductEntity existingCloth = productRepository.findByProductId(productId);
         if(existingCloth != null)
             productRepository.delete(existingCloth);

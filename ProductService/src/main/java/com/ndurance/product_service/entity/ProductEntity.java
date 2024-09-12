@@ -15,10 +15,11 @@ public class ProductEntity {
     private Long id;
     private String productId;
     private String name;
+    @Column(length = 1000)
     private String description;
     private ProductType type;
     private List<String> images;
     private int price;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<CommentEntity> comments;
 }

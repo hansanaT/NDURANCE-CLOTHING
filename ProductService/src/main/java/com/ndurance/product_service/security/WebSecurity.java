@@ -40,7 +40,9 @@ public class WebSecurity{
         .requestMatchers(HttpMethod.GET, SecurityConstants.PRODUCTS)
         .permitAll().
                  requestMatchers(new AntPathRequestMatcher("/h2-console/**"))
-        .permitAll().requestMatchers(HttpMethod.GET, SecurityConstants.PRODUCTS)
+        .permitAll()
+                 .requestMatchers(SecurityConstants.COMMENT).hasRole("USER")
+                 .requestMatchers(HttpMethod.GET, SecurityConstants.PRODUCTS)
                  .permitAll()
                  .requestMatchers(HttpMethod.PUT, SecurityConstants.PRODUCTS).hasRole("ADMIN")
                  .requestMatchers(HttpMethod.POST, SecurityConstants.PRODUCTS).hasRole("ADMIN")

@@ -13,11 +13,11 @@ import java.net.MalformedURLException;
 import java.util.List;
 
 public interface ProductService {
-    ProductDTO insertCloth(ClothRequestModel clothRequestModel);
-    void saveCloth(ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception;
-    void saveCloth(String productId, ClothRequestModel clothRequestModel,List<MultipartFile> files) throws Exception;
-    void deleteCloth(String productId) throws Exception;
-    ProductDTO getCloth(String productId);
+    ProductDTO insertProduct(ClothRequestModel clothRequestModel);
+    void saveProduct(ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception;
+    void saveProduct(String productId, ClothRequestModel clothRequestModel, List<MultipartFile> files) throws Exception;
+    void deleteProduct(String productId) throws Exception;
+    ProductDTO getProduct(String productId);
     List<ProductDTO> getCloths();
     Resource loadImageAsResource(String imageName) throws MalformedURLException;
     Page<ProductDTO> findAll(int page, int size);
