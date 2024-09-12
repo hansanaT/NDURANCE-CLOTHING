@@ -1,12 +1,10 @@
 "use client";
-
-import Navigation from "@/app/navigation";
-
+import {DashNav} from "@/app/dashboard/navigation";
 
 export default function Dashboard(){
     return (
         <div>
-            <Navigation />
+            <DashNav />
         </div>
     );
 }
