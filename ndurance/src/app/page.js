@@ -1,4 +1,4 @@
-"use client"; // Add this line at the top
+"use client";
 
 import Navigation from "./navigation";
 import './globals.css';

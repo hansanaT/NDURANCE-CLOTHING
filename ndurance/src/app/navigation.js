@@ -35,7 +35,7 @@ const Navigation = () => {
                 Authorization: `Bearer ${token}`
             }
         });
-        
+
         return user;
     }
 
@@ -54,15 +54,12 @@ const Navigation = () => {
             setIsSignIn(true);
         }
     }, []);
-
     useEffect(() => {
         const fetchUserProfilePicture = async () => {
             try {
-                // Get the JWT token and user ID from cookies
                 const token = Cookies.get('jwt');
                 const userId = Cookies.get('userId');
 
-                // Request to get the user's profile picture
                 const response = await axios.get(`http://localhost:8080/user-service/users/image/${userId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
