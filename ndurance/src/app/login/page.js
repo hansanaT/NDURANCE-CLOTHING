@@ -42,7 +42,7 @@ const SignIn = () => {
                 setSuccess("Login Successful");
                 setTimeout(() => {
                     router.push("/");
-                },2000);
+                }, 2000);
             }
             else {
                 setError(res.data.message || "Login Failed");
