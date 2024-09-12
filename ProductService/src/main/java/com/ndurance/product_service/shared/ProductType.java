@@ -1,14 +1,9 @@
 package com.ndurance.product_service.shared;
 
 public enum ProductType {
-	TOPS,
-	BOTTOMS,
-	DRESSES,
-	OUTERWEAR,
+	HATS,
 	FOOTWEAR,
-	ACCESSORIES,
-	UNDERGARMENTS,
-	ACTIVEWEAR,
-	SLEEPWEAR,
-	SWIMWEAR
+	OUTERWEAR,
+	WOMENS,
+	MENS,
 }

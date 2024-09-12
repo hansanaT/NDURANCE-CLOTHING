@@ -1,15 +1,9 @@
 "use client";
 
-import React, {useState,useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Link from "next/link";
 import "./globals.css"
-import {
-    Button, Avatar,
-    Dropdown,
-    DropdownDivider,
-    DropdownItem,
-    Navbar,
-} from "flowbite-react";
+import {Avatar, Button, Dropdown, DropdownDivider, DropdownItem, Navbar,} from "flowbite-react";
 import styled from "styled-components";
 import Cookies from 'js-cookie';
 import axios from "axios";
@@ -30,17 +24,17 @@ const Navigation = () => {
         const token = Cookies.get('jwt');
         const userId = Cookies.get('userId');
 
+        console.log(userId);
+
         if (!token || !userId) {
             return;
         }
 
-        const user =  await axios.get(`http://localhost:8080/user-service/users/${userId}`, {
+        return await axios.get(`http://localhost:8080/user-service/users/${userId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
-
-        return user;
     }
 
     useEffect(() => {
@@ -112,8 +106,8 @@ const Navigation = () => {
                         }
                     >
                         <Dropdown.Header>
+                            <span className="block truncate text-sm font-medium">{userDetails.firstName} {userDetails.lastName}</span>
                             <span className="block text-sm">{userDetails.email}</span>
-                            <span className="block truncate text-sm font-medium">{userDetails.firstName}</span>
                         </Dropdown.Header>
                         <Dropdown.Item>Dashboard</Dropdown.Item>
                         {/* <Dropdown.Item>Settings</Dropdown.Item> */}
