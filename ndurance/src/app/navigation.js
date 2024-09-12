@@ -111,8 +111,9 @@ const Navigation = () => {
                             <span className="block truncate text-sm font-medium">{userDetails.firstName}</span>
                         </Dropdown.Header>
                         <Dropdown.Item>Dashboard</Dropdown.Item>
-                        <Dropdown.Item>Settings</Dropdown.Item>
+                        {/* <Dropdown.Item>Settings</Dropdown.Item> */}
                         <Dropdown.Item>Wishlist</Dropdown.Item>
+                        <DropdownItem href={"/user"}>User Profile</DropdownItem>
                         <Dropdown.Divider/>
                         <Dropdown.Item>Sign out</Dropdown.Item>
                     </Dropdown>
@@ -138,6 +139,7 @@ const Navigation = () => {
             <Navbar.Collapse className="text-center">
                 <Navbar.Link href="/">HOME</Navbar.Link>
                 <Navbar.Link href="/category">CATEGORIES</Navbar.Link>
+                <Navbar.Link href="/all">ALL</Navbar.Link>
             </Navbar.Collapse>
         </Navbar>
     );

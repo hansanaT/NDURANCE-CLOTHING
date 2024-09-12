@@ -98,7 +98,7 @@ public class TokenConverter {
         if (user == null || !(Objects.equals(user.getUserId(), id)))
             return null;
         else
-            return user.getEmail();
+            return user.getUserId();
     }
 
 }

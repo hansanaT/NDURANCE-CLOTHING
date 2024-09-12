@@ -17,6 +17,8 @@ public interface ProductService {
     void deleteCloth(String productId) throws Exception;
     ProductDTO getCloth(String productId);
     List<ProductDTO> getCloths();
+    List<ProductDTO> searchCloths(String name);
+    List<ProductDTO> getClothsByType(String type);
     Resource loadImageAsResource(String imageName) throws MalformedURLException;
 
     List<CommentDTO> getComments(String productId);
