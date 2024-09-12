@@ -75,7 +75,8 @@ const UserSettings = ({ user, edit }) => {
                 const imageUrl = URL.createObjectURL(response.data);
                 setImageSrc(imageUrl);
             } catch (error) {
-               // setError(`Error fetching user profile picture: , ${error}`);
+                console.log(error)
+               //setError(`Error fetching user profile picture: , ${error}`);
             }
         };
 
@@ -137,7 +138,7 @@ const UserSettings = ({ user, edit }) => {
                     setImageSrc(imageUrl);
                 })
                 .catch(error => {
-                    setError(`Error uploading profile picture: ${error}`);
+                    //setError(`Error uploading profile picture: ${error}`);
                 });
         }
     };

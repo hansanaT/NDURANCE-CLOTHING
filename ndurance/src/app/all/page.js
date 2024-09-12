@@ -22,7 +22,7 @@ const ProductsPage = () => {
 
   const categories = [
     "TOPS", "BOTTOMS", "DRESSES", "OUTERWEAR", "FOOTWEAR", "ACCESSORIES",
-    "UNDERGARMENTS", "ACTIVEWEAR", "SLEEPWEAR", "SWIMWEAR"
+    "UNDERGARMENTS", "ACTIVEWEAR", "SLEEPWEAR", "SWIMWEAR","WOMENS","HATS","MENS"
   ];
 
   useEffect(() => {
