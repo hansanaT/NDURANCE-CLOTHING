@@ -18,7 +18,7 @@ const ProductsPage = () => {
 
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [size, setSize] = useState(6);
+  const [size, setSize] = useState(20);
 
   const categories = [
     "TOPS", "BOTTOMS", "DRESSES", "OUTERWEAR", "FOOTWEAR", "ACCESSORIES",
