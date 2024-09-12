@@ -1,6 +1,7 @@
 package com.ndurance.user_servince.contoller;
 
 import com.ndurance.user_servince.exceptions.UserServiceException;
+import com.ndurance.user_servince.exceptions.UserUnAuthorizedServiceException;
 import com.ndurance.user_servince.shared.model.request.UserDetailsRequestModel;
 import com.ndurance.user_servince.shared.model.request.UserPasswordReset;
 import com.ndurance.user_servince.shared.model.response.*;
@@ -47,7 +48,7 @@ public class UserController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
 		if(!Objects.equals(username, userid))
-			throw new UserServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
+			throw new UserUnAuthorizedServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
 
 		UserDto userDto = userService.getUserByUserId(userid);
 		ModelMapper modelMapper = new ModelMapper();
@@ -56,6 +57,12 @@ public class UserController {
 	
 	@PutMapping("/upload-pic/{userid}")
 	public UserRest updateUserProfile(@PathVariable String userid, @RequestParam("image") MultipartFile file) throws Exception {
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String username = authentication.getName();
+		if(!Objects.equals(username, userid))
+			throw new UserUnAuthorizedServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
+
 		ModelMapper modelMapper = new ModelMapper();
 		UserDto createdUser = userService.updateUserProfile(file, userid);
 		return modelMapper.map(createdUser, UserRest.class);
@@ -78,6 +85,12 @@ public class UserController {
 
 	@PutMapping(path = "/{userid}")
 	public UserRest updateUser(@PathVariable String userid, @RequestBody UserDetailsRequestModel userDetails) {
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String username = authentication.getName();
+		if(!Objects.equals(username, userid))
+			throw new UserUnAuthorizedServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
+
 		UserRest returnValue = new UserRest();
 
 		UserDto userDto = new UserDto();
@@ -91,6 +104,12 @@ public class UserController {
 
 	@DeleteMapping(path = "/{userid}")
 	public OperationStatusModel deleteUser(@PathVariable String userid) {
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String username = authentication.getName();
+		if(!Objects.equals(username, userid))
+			throw new UserUnAuthorizedServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
+
 		OperationStatusModel returnValue = new OperationStatusModel();
 		returnValue.setOperationName(RequestOperationName.DELETE.name());
 
@@ -102,10 +121,11 @@ public class UserController {
 
 	@PostMapping("/reset-password/{userId}")
 	public void resetPassWord(@RequestBody UserPasswordReset userPasswordReset, @PathVariable String userId){
+
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
 		if(!Objects.equals(username, userId))
-			throw new UserServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
+			throw new UserUnAuthorizedServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
 
         userService.resetPassWord(userPasswordReset);
 	}
@@ -157,6 +177,11 @@ public class UserController {
 	@GetMapping(path = "/{userId}/addresses/{addressId}", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE})
 	public EntityModel<AddressesRest> getUserAddress(@PathVariable String userId, @PathVariable String addressId) {
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String username = authentication.getName();
+		if(!Objects.equals(username, userId))
+			throw new UserUnAuthorizedServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
 
 		AddressDTO addressesDto = addressService.getAddress(addressId);
 

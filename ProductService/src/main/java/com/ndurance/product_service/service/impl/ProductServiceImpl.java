@@ -64,6 +64,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<ProductDTO> searchCloths(String name) {
+        return null;
+    }
+
+    @Override
+    public List<ProductDTO> getClothsByType(String type) {
+        return null;
+    }
+
+    @Override
     public Resource loadImageAsResource(String imageName) throws MalformedURLException {
         Path filePath = Paths.get(UPLOAD_DIR).resolve(imageName).normalize();
         Resource resource = new UrlResource(filePath.toUri());
