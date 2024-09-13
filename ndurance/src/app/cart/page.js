@@ -1,3 +1,5 @@
+"use client";
+
 import Navigation from "@/app/navigation";
 import axios from "axios";
 import Cookie from "js-cookie";
@@ -5,15 +7,41 @@ import {useEffect, useState} from "react";
 import Cookies from "js-cookie";
 
 export default function Cart(){
-    const [cartData, setCartData] = useState([]);
+    const[cart,setCart] = useState([{}]);
+
     const fetchCart = async () => {
-        const userId = Cookies.get('userId');
-        return await axios.get(`http://localhost:8080/cart-service/cart/${userId}`, {
-            headers: {
-                Authorization: `Bearer ${Cookie.get('jwt')}`
+        const uid = Cookies.get('userId');
+        return await axios.get(`http://localhost:8080/cart-service/cart/${uid}`,{
+            headers:{
+                'Authorization': `Bearer ${Cookies.get('jwt')}`
             }
         });
     }
+
+    const checkout = async ()=>{
+        try {
+            const uid = Cookies.get('userId');
+            const response = await axios.get(`http://localhost:8080/cart-service/cart/checkout/${uid}?addressSame=true`,{
+                headers:{
+                    'Authorization': `Bearer ${Cookies.get('jwt')}`
+                }
+            });
+            const data = response.data.data;
+            console.log(data)
+        }catch (e) {
+            console.log(e);
+        }
+    }
+
+    useEffect(() => {
+        fetchCart().then((data) => {
+            setCart(data.data);
+        });
+
+    }, []);
+    useEffect(() => {
+
+    }, [cart]);
     return(
         <div>
             <Navigation/>
@@ -24,7 +52,7 @@ export default function Cart(){
                     <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
                         <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
                             <div className="space-y-6">
-                                {cartData.map((item) => (
+                                {cart.map((item) => (
                                     <div key={item.id}
                                         className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
                                         <div
@@ -146,8 +174,10 @@ export default function Cart(){
                                     </dl>
                                 </div>
 
-                                <a href="#"
-                                   className="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Proceed
+                                <a href="#" onClick={checkout}
+                                   className="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm
+                                   font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300
+                                   dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Proceed
                                     to Checkout</a>
 
                                 <div className="flex items-center justify-center gap-2">
