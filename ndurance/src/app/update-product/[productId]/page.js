@@ -113,16 +113,11 @@ export default function updateProduct({ params }) {
                         value={type}
                         onChange={(e) => setType(e.target.value)}
                     >
-                        <option value="TOPS">TOPS</option>
-                        <option value="BOTTOMS">BOTTOMS</option>
-                        <option value="DRESSES">DRESSES</option>
+                        <option value="HATS">TOPS</option>
                         <option value="OUTERWEAR">OUTERWEAR</option>
                         <option value="FOOTWEAR">FOOTWEAR</option>
-                        <option value="ACCESSORIES">ACCESSORIES</option>
-                        <option value="UNDERGARMENTS">UNDERGARMENTS</option>
-                        <option value="ACTIVEWEAR">ACTIVEWEAR</option>
-                        <option value="SLEEPWEAR">SLEEPWEAR</option>
-                        <option value="SWIMWEAR">SWIMWEAR</option>
+                        <option value="WOMENS">ACTIVEWEAR</option>
+                        <option value="MENS">SLEEPWEAR</option>
                     </select>
                 </div>
                 <div>

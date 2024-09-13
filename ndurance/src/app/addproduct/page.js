@@ -1,6 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 import Cookies from 'js-cookie';
 import Navigation from "../navigation";
 import { Textarea } from "flowbite-react";
@@ -9,10 +8,8 @@ export default function AddProduct() {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
-    const [type, setType] = useState('DRESSES');
+    const [type, setType] = useState('HATS');
     const [images, setImages] = useState([]);
-    const router = useRouter();
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -85,19 +82,11 @@ export default function AddProduct() {
                             value={type}
                             onChange={(e) => setType(e.target.value)}
                         >
-                            <option value="TOPS">TOPS</option>
-                            <option value="BOTTOMS">BOTTOMS</option>
-                            <option value="DRESSES">DRESSES</option>
+                            <option value="TOPS">HATS</option>
                             <option value="OUTERWEAR">OUTERWEAR</option>
                             <option value="FOOTWEAR">FOOTWEAR</option>
-                            <option value="ACCESSORIES">ACCESSORIES</option>
-                            <option value="UNDERGARMENTS">UNDERGARMENTS</option>
-                            <option value="ACTIVEWEAR">ACTIVEWEAR</option>
-                            <option value="SLEEPWEAR">SLEEPWEAR</option>
-                            <option value="SWIMWEAR">SWIMWEAR</option>
                             <option value="MENS">MENS</option>
                             <option value="WOMENS">WOMENS</option>
-                            <option value="HATS">HATS</option>
                         </select>
                     </div>
                     <div>

@@ -21,8 +21,7 @@ const ProductsPage = () => {
   const [size, setSize] = useState(20);
 
   const categories = [
-    "TOPS", "BOTTOMS", "DRESSES", "OUTERWEAR", "FOOTWEAR", "ACCESSORIES",
-    "UNDERGARMENTS", "ACTIVEWEAR", "SLEEPWEAR", "SWIMWEAR","WOMENS","HATS","MENS"
+    "HATS", "OUTERWEAR", "FOOTWEAR","WOMENS","MENS"
   ];
 
   useEffect(() => {
