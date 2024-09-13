@@ -13,6 +13,7 @@ import com.ndurance.order_service.repository.ProductRepository;
 import com.ndurance.order_service.service.OrderService;
 import com.ndurance.order_service.shared.AddressesModel;
 import com.ndurance.order_service.shared.Utils;
+import com.ndurance.order_service.shared.dto.ProductDTO;
 import com.ndurance.order_service.shared.model.request.OrderRequestModel;
 import com.ndurance.order_service.shared.model.response.OrderRest;
 import org.modelmapper.ModelMapper;
@@ -58,8 +59,9 @@ public class OrderServiceImpl implements OrderService {
         AtomicReference<Long> totalPrice = new AtomicReference<>(0L);
 
         products.forEach(p->{
-            ProductRest productRest = productClient.getProductById(p, token);
-
+            System.out.println("Product ID: " + p);
+            ProductDTO productRest = productClient.getProductById(p, token);
+            System.out.println("Product ID: " + productRest.getName());
             ProductEntity product = new ProductEntity();
             product.setProductId(productRest.getProductId());
             product.setName(productRest.getName());

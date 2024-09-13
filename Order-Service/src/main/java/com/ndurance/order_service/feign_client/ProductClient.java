@@ -1,6 +1,7 @@
 package com.ndurance.order_service.feign_client;
 
 import com.ndurance.order_service.feign_client.model.ProductRest;
+import com.ndurance.order_service.shared.dto.ProductDTO;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -13,9 +14,9 @@ public interface ProductClient {
     @GetMapping("/products/{productId}")
     @Retry(name="product-service")
     @CircuitBreaker(name="user-service", fallbackMethod="getProductByIdFallback")
-    ProductRest getProductById(@PathVariable("productId") String productId, @RequestHeader("Authorization") String token);
+    ProductDTO getProductById(@PathVariable("productId") String productId, @RequestHeader("Authorization") String token);
 
-    default ProductRest getProductByIdFallback(String productId, String token, Throwable exception){
-        return new ProductRest();
+    default ProductDTO getProductByIdFallback(String productId, String token, Throwable exception){
+        return new ProductDTO();
     }
 }

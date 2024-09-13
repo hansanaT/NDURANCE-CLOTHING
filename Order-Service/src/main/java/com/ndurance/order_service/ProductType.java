@@ -1,14 +1,9 @@
 package com.ndurance.order_service;
 
 public enum ProductType {
-	TOPS,
-	BOTTOMS,
-	DRESSES,
-	OUTERWEAR,
+	HATS,
 	FOOTWEAR,
-	ACCESSORIES,
-	UNDERGARMENTS,
-	ACTIVEWEAR,
-	SLEEPWEAR,
-	SWIMWEAR
+	OUTERWEAR,
+	WOMENS,
+	MENS
 }

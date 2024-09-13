@@ -50,7 +50,7 @@ public class OrderController {
         Map<String, Integer> products = new HashMap<>();
 
         cart.forEach(c->{
-            products.put(c.getProducts(), c.getPrice());
+            products.put(c.getProductId(), c.getPrice());
         });
 
         requestModel.setProducts(products);

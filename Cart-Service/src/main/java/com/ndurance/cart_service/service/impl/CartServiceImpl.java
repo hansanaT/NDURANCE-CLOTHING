@@ -35,7 +35,13 @@ public class CartServiceImpl implements CartService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        CartEntity cartEntity = modelMapper.map(requestModel, CartEntity.class);
+        CartEntity cartEntity = new CartEntity();
+        cartEntity.setProductId(requestModel.getProductId());
+        cartEntity.setPrice(requestModel.getPrice());
+        cartEntity.setQuantity(requestModel.getQuantity());
+        cartEntity.setName(requestModel.getName());
+        cartEntity.setImages(requestModel.getImages());
+
         cartEntity.setUser(username);
         cartEntity.setCartId(utils.generateAddressId(20));
         cartRepository.save(cartEntity);
