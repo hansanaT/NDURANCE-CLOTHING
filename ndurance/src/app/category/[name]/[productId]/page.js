@@ -1,11 +1,65 @@
+"use client";
+
 import Navigation from "@/app/navigation";
 import axios from "axios";
+import {useEffect, useState} from "react";
+import Cookies from "js-cookie";
 
-const ProductPage = async ({params}) => {
-    const product = await axios.get(`http://localhost:8080/product-service/products/${params.productId}`);
-    if (!product) {
-        return <div>Product not found</div>;
-    }
+export default function ProductPage({params}) {
+    const pid = params.productId;
+    const[product, setProduct] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const addToCart = async (cart) => {
+        const userId = Cookies.get('userId')
+
+        try {
+            console.log("Cart",cart);
+            cart.quantity = 1;
+            const response = await fetch(`http://localhost:8080/cart-service/cart/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${Cookies.get('jwt')}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(cart),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save cart to backend');
+            }
+
+            const data = await response.text();
+            console.log("Item Added",data);
+        } catch (error) {
+            alert('Error saving cart');
+            console.error('Error saving cart:', error);
+        }
+    };
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try{
+                const response = await axios.get(`http://localhost:8080/product-service/products/${pid}`);
+                if (!response.data) {
+                    setError('Product not found');
+                }
+                setProduct(response.data);
+            }
+            catch (e) {
+                setError(e.message);
+            }
+            finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProduct();
+    }, [pid]);
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>{error}</p>;
 
     return (
         <div>
@@ -16,16 +70,16 @@ const ProductPage = async ({params}) => {
                         {/*Product Image*/}
                         <div className="w-full md:w-1/2 px-4 mb-8 items-center justify-center">
                             <img
-                                src={`http://localhost:8080/product-service/products/images/${product.data.images}`}
-                                alt={product.data.name}
+                                src={`http://localhost:8080/product-service/products/images/${product.images[0]}`}
+                                alt={product.name}
                                 className="rounded-box shadow-md mb-4 w-[600px] h-[650px]" id="mainImage"/>
                         </div>
 
                         {/*Product Details*/}
                         <div className="w-full md:w-1/2 px-4 h-dvh items-center justify-center">
-                            <h2 className="text-3xl font-bold mb-2">{product.data.name}</h2>
+                            <h2 className="text-3xl font-bold mb-2">{product.name}</h2>
                             <div className="mb-4">
-                                <span className="text-2xl font-bold mr-2">${product.data.price}</span>
+                                <span className="text-2xl font-bold mr-2">${product.price}</span>
                             </div>
                             <div className="flex items-center mb-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -69,7 +123,7 @@ const ProductPage = async ({params}) => {
                             </div>
 
                             <div className="flex space-x-4 mb-6">
-                                <button type="button"
+                                <button type="button" onClick={() => addToCart(product)}
                                         className="inline-flex items-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                                     <svg className="-ms-2 me-2 h-5 w-5" aria-hidden="true"
                                          xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
@@ -93,7 +147,7 @@ const ProductPage = async ({params}) => {
                             <div className="mb-6">
                                 <label htmlFor="quantity"
                                        className="block font-medium text-gray-700 mb-1">Description:</label>
-                                <span className="ml-2 text-sm text-gray-600">{product.data.description}</span>
+                                <span className="ml-2 text-sm text-gray-600">{product.description}</span>
                             </div>
                         </div>
                     </div>
@@ -103,5 +157,3 @@ const ProductPage = async ({params}) => {
         </div>
     );
 };
-
-export default ProductPage;

@@ -7,7 +7,6 @@ import { Ftr } from "@/app/footer";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
-import Image from 'next/image';
 
 const Home = () => {
 
@@ -71,18 +70,20 @@ const Home = () => {
                 <div className="carousel-track flex space-x-4 animate-scroll">
                     {productDetails.map((category) => (
                         <div key={category.productId} className="carousel-item relative">
-                            <Image
+                            {/*<Image*/}
+                            {/*    key={category.productId}*/}
+                            {/*    src={`http://localhost:8080/product-service/products/images/${category.images[0]}`}*/}
+                            {/*    alt={category.name}*/}
+                            {/*    width={500}*/}
+                            {/*    height={500}*/}
+                            {/*    className="rounded-lg"*/}
+                            {/*/>*/}
+                            <img
                                 key={category.productId}
                                 src={`http://localhost:8080/product-service/products/images/${category.images[0]}`}
                                 alt={category.name}
-                                width={500}
-                                height={500}
                                 className="rounded-lg"
                             />
-                            {/* <img
-                            src={`http://localhost:8080/product-service/products/images/${category.images[0]}`}
-                            alt={category.name}
-                            className="rounded-box"/> */}
                             <div
                                 className="justify-center absolute bottom-0 rounded-md bg-white bg-opacity-70 p-2 flex gap-3">
                                 <p className="text-md font-bold mt-2">${category.price}</p>
@@ -92,18 +93,20 @@ const Home = () => {
                     ))}
                     {productDetails.map((category) => (
                         <div key={category.productId} className="carousel-item relative">
-                            {/* <img
-                                src={`http://localhost:8080/product-service/products/images/${category.images[0]}`}
-                                alt={category.name}
-                                className="rounded-box" /> */}
-                            <Image
+                            <img
                                 key={category.productId}
                                 src={`http://localhost:8080/product-service/products/images/${category.images[0]}`}
                                 alt={category.name}
-                                width={500}
-                                height={500}
                                 className="rounded-lg"
                             />
+                            {/*<Image*/}
+                            {/*    key={category.productId}*/}
+                            {/*    src={`http://localhost:8080/product-service/products/images/${category.images[0]}`}*/}
+                            {/*    alt={category.name}*/}
+                            {/*    width={500}*/}
+                            {/*    height={500}*/}
+                            {/*    className="rounded-lg"*/}
+                            {/*/>*/}
                             <div
                                 className="justify-center absolute bottom-0 rounded-md bg-white bg-opacity-70 p-2 flex gap-3">
                                 <p className="text-md font-bold mt-2">${category.price}</p>

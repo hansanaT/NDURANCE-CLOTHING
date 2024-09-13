@@ -1,12 +1,61 @@
+"use client";
+
+import{useState,useEffect} from "react";
 import Navigation from "@/app/navigation";
 import axios from "axios";
+import Cookies from "js-cookie";
 
-export default async function Category({params}) {
+export default function Category({params}) {
     const name = params.name.toUpperCase();
     const catName= params.name.charAt(0).toUpperCase() + params.name.slice(1).toLowerCase();
+    const [catTypes, setCatTypes] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const res = await axios.get(`http://localhost:8080/product-service/products/byType?type=${name}`);
-    const catTypes = res.data;
+    const addToCart = async (cart) => {
+        const userId = Cookies.get('userId')
+
+        try {
+            console.log("Cart",cart);
+            cart.quantity = 1;
+            const response = await fetch(`http://localhost:8080/cart-service/cart/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${Cookies.get('jwt')}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(cart),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save cart to backend');
+            }
+
+            const data = await response.text();
+            console.log("Item Added",data);
+        } catch (error) {
+            alert('Error saving cart');
+            console.error('Error saving cart:', error);
+        }
+    };
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const res = await axios.get(`http://localhost:8080/product-service/products/byType?type=${name}`);
+                setCatTypes(res.data.content);
+            } catch (err) {
+                setError('Failed to fetch products.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, [name]);
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>{error}</p>;
 
     return (
         <div>
@@ -92,7 +141,7 @@ export default async function Category({params}) {
                     </div>
                     {/*Cards Start*/}
                     <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
-                        {catTypes.content.map((item) => (
+                        {catTypes.map((item) => (
                             <div key={item.productId}
                                  className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                                 <div className="h-56 w-full">
@@ -218,7 +267,7 @@ export default async function Category({params}) {
                                     <div className="mt-4 flex items-center justify-between gap-4">
                                         <p className="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">${item.price}</p>
 
-                                        <button type="button"
+                                        <button type="button" onClick={() => addToCart(item)}
                                                 className="inline-flex items-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                                             <svg className="-ms-2 me-2 h-5 w-5" aria-hidden="true"
                                                  xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
