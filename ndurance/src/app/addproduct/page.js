@@ -1,13 +1,17 @@
 "use client";
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Cookies from 'js-cookie';
+import Navigation from "../navigation";
+import { Textarea } from "flowbite-react";
 
-export default function addProduct() {
+export default function AddProduct() {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [type, setType] = useState('DRESSES');
     const [images, setImages] = useState([]);
+    const router = useRouter();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -44,64 +48,70 @@ export default function addProduct() {
 
     return (
         <div>
-            <h1>Add New Product</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Name:</label>
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Description:</label>
-                    <input
-                        type="text"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Price:</label>
-                    <input
-                        type="number"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Type:</label>
-                    <select
-                        value={type}
-                        onChange={(e) => setType(e.target.value)}
-                    >
-                        <option value="TOPS">TOPS</option>
-                        <option value="BOTTOMS">BOTTOMS</option>
-                        <option value="DRESSES">DRESSES</option>
-                        <option value="OUTERWEAR">OUTERWEAR</option>
-                        <option value="FOOTWEAR">FOOTWEAR</option>
-                        <option value="ACCESSORIES">ACCESSORIES</option>
-                        <option value="UNDERGARMENTS">UNDERGARMENTS</option>
-                        <option value="ACTIVEWEAR">ACTIVEWEAR</option>
-                        <option value="SLEEPWEAR">SLEEPWEAR</option>
-                        <option value="SWIMWEAR">SWIMWEAR</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Images:</label>
-                    <input
-                        type="file"
-                        multiple
-                        onChange={handleFileChange}
-                        required
-                    />
-                </div>
-                <button type="submit">Add Product</button>
-            </form>
+            <Navigation />
+            <div>
+                <h1>Add New Product</h1>
+                <form onSubmit={handleSubmit}>
+                    <div>
+                        <label>Name:</label>
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label>Description:</label>
+                        <Textarea
+                            type="text"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label>Price:</label>
+                        <input
+                            type="number"
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label>Type:</label>
+                        <select
+                            value={type}
+                            onChange={(e) => setType(e.target.value)}
+                        >
+                            <option value="TOPS">TOPS</option>
+                            <option value="BOTTOMS">BOTTOMS</option>
+                            <option value="DRESSES">DRESSES</option>
+                            <option value="OUTERWEAR">OUTERWEAR</option>
+                            <option value="FOOTWEAR">FOOTWEAR</option>
+                            <option value="ACCESSORIES">ACCESSORIES</option>
+                            <option value="UNDERGARMENTS">UNDERGARMENTS</option>
+                            <option value="ACTIVEWEAR">ACTIVEWEAR</option>
+                            <option value="SLEEPWEAR">SLEEPWEAR</option>
+                            <option value="SWIMWEAR">SWIMWEAR</option>
+                            <option value="MENS">MENS</option>
+                            <option value="WOMENS">WOMENS</option>
+                            <option value="HATS">HATS</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Images:</label>
+                        <input
+                            type="file"
+                            multiple
+                            onChange={handleFileChange}
+                            required
+                        />
+                    </div>
+                    <button type="submit">Add Product</button>
+                </form>
+            </div>
         </div>
     );
 }

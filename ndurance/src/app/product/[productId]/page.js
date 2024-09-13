@@ -34,7 +34,8 @@ const ProductPage = ({ params }) => {
       setUserDetails(response.data);
       setIsAdmin(response.data.roles.includes('ROLE_ADMIN'));
     } catch (err) {
-      setError('Failed to fetch user details');
+      console.error(err);
+      //setError('Failed to fetch user details');
     }
   };
 
@@ -95,7 +96,7 @@ const ProductPage = ({ params }) => {
       setCommentSuccess(true);
       fetchProduct(); // Refresh product data
     } catch (err) {
-      setError(err.message);
+      alert(err.message);
     }
   };
 
@@ -121,7 +122,7 @@ const ProductPage = ({ params }) => {
 
       alert('Product deleted successfully');
     } catch (err) {
-      setError(err.message);
+      alert(err.message);
     }
   };
 
