@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Cookies from 'js-cookie';
 
-export default function UpdateProduct({ params }) {
+export default function updateProduct({ params }) {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');

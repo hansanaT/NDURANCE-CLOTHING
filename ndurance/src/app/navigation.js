@@ -26,8 +26,6 @@ const Navigation = () => {
         const token = Cookies.get('jwt');
         const userId = Cookies.get('userId');
 
-        console.log(userId);
-
         if (!token || !userId) {
             return;
         }
@@ -48,8 +46,8 @@ const Navigation = () => {
         });
 
         if (jwtExists) {
-            setIsAuthenticated(true);
             setIsSignIn(false);
+            setIsAuthenticated(true);
         } else {
             setIsAuthenticated(false);
             setIsSignIn(true);

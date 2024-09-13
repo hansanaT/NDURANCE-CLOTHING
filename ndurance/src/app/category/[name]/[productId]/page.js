@@ -1,18 +1,8 @@
 import Navigation from "@/app/navigation";
-import SHOP_DATA from '@/shopData';
+import axios from "axios";
 
-const ProductPage = ({ params }) => {
-    const { name, itemName } = params;
-
-    const category = SHOP_DATA.find(category => category.name.toLowerCase() === name.toLowerCase());
-    if (!category) {
-        return <div>Category not found</div>;
-    }
-
-    const product = category.items.find(
-        item => item.name.toLowerCase().replace(/ /g, '-') === itemName
-    );
-
+const ProductPage = async ({params}) => {
+    const product = await axios.get(`http://localhost:8080/product-service/products/${params.productId}`);
     if (!product) {
         return <div>Product not found</div>;
     }
@@ -26,16 +16,16 @@ const ProductPage = ({ params }) => {
                         {/*Product Image*/}
                         <div className="w-full md:w-1/2 px-4 mb-8 items-center justify-center">
                             <img
-                                src={product.imageUrl}
-                                alt={product.name}
-                                className="rounded-box shadow-md mb-4" id="mainImage"/>
+                                src={`http://localhost:8080/product-service/products/images/${product.data.images}`}
+                                alt={product.data.name}
+                                className="rounded-box shadow-md mb-4 w-[600px] h-[650px]" id="mainImage"/>
                         </div>
 
                         {/*Product Details*/}
                         <div className="w-full md:w-1/2 px-4 h-dvh items-center justify-center">
-                            <h2 className="text-3xl font-bold mb-2">{product.name}</h2>
+                            <h2 className="text-3xl font-bold mb-2">{product.data.name}</h2>
                             <div className="mb-4">
-                                <span className="text-2xl font-bold mr-2">${product.price}</span>
+                                <span className="text-2xl font-bold mr-2">${product.data.price}</span>
                             </div>
                             <div className="flex items-center mb-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -74,7 +64,7 @@ const ProductPage = ({ params }) => {
                             <div className="mb-6">
                                 <label htmlFor="quantity"
                                        className="block text-sm font-medium text-gray-700 mb-1">Quantity:</label>
-                                <input type="number" id="quantity" name="quantity" min="1" value="1"
+                                <input type="number" id="quantity" name="quantity" min="1" defaultValue="1"
                                        className="w-12 text-center rounded-md border-gray-300  shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"/>
                             </div>
 
@@ -99,6 +89,11 @@ const ProductPage = ({ params }) => {
                                     </svg>
                                     Wishlist
                                 </button>
+                            </div>
+                            <div className="mb-6">
+                                <label htmlFor="quantity"
+                                       className="block font-medium text-gray-700 mb-1">Description:</label>
+                                <span className="ml-2 text-sm text-gray-600">{product.data.description}</span>
                             </div>
                         </div>
                     </div>

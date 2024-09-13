@@ -11,5 +11,5 @@ export async function middleware(req) {
 }
 
 export const config = {
-    matcher: ['/'], //protected routes
+    matcher: ['/','/addproduct'], //protected routes
 };

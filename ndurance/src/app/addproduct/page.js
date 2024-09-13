@@ -1,15 +1,13 @@
 "use client";
-import React, {useState,useEffect} from "react";
-import {useRouter} from "next/navigation";
+import React, {useState} from "react";
 import Cookies from 'js-cookie';
 
-export default function AddProduct() {
+export default function addProduct() {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [type, setType] = useState('DRESSES');
     const [images, setImages] = useState([]);
-    const router = useRouter();
 
     const handleSubmit = async (e) => {
         e.preventDefault();

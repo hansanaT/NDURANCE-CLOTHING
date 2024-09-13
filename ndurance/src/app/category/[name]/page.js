@@ -2,11 +2,11 @@ import Navigation from "@/app/navigation";
 import axios from "axios";
 
 export default async function Category({params}) {
-    const name = params.name.charAt(0).toUpperCase() + params.name.slice(1);
-    // const categoryData = SHOP_DATA.find((data) => data.name.toLowerCase() === name.toLowerCase());
+    const name = params.name.toUpperCase();
+    const catName= params.name.charAt(0).toUpperCase() + params.name.slice(1).toLowerCase();
 
-    const res = await axios.get(`http://localhost:3000/product-service/products`);
-    const catTypes = res.data.content.map((product) => product.type === name.toUpperCase());
+    const res = await axios.get(`http://localhost:8080/product-service/products/byType?type=${name}`);
+    const catTypes = res.data;
 
     return (
         <div>
@@ -16,7 +16,7 @@ export default async function Category({params}) {
                     <div className="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8">
                         <div>
                             <h2 className="mt-3 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-                                {name}</h2>
+                                {catName}</h2>
                         </div>
                         <div className="flex items-center space-x-4">
                             <button data-modal-toggle="filterModal" data-modal-target="filterModal" type="button"
@@ -92,13 +92,13 @@ export default async function Category({params}) {
                     </div>
                     {/*Cards Start*/}
                     <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
-                        {catTypes((item) => (
+                        {catTypes.content.map((item) => (
                             <div key={item.productId}
                                  className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                                 <div className="h-56 w-full">
-                                    <a href={`/category/${name.toUpperCase()}/${item.name.toLowerCase().replace(/ /g, '-')}`}>
+                                    <a href={`/category/${name.toLowerCase()}/${item.productId}`}>
                                         <img className="mx-auto h-full dark:hidden"
-                                             src={item.images[0].url}
+                                             src={`http://localhost:8080/product-service/products/images/${item.images[0]}`}
                                              alt=""/>
                                     </a>
                                 </div>
