@@ -1,10 +1,8 @@
 package com.ndurance.user_servince.service.impl;
 
+import com.ndurance.user_servince.entity.AddressEntity;
 import com.ndurance.user_servince.exceptions.UserServiceException;
-import com.ndurance.user_servince.repository.AuthorityRepository;
-import com.ndurance.user_servince.repository.PasswordResetTokenRepository;
-import com.ndurance.user_servince.repository.RoleRepository;
-import com.ndurance.user_servince.repository.UserRepository;
+import com.ndurance.user_servince.repository.*;
 import com.ndurance.user_servince.security.UserPrincipal;
 import com.ndurance.user_servince.shared.Utils;
 import com.ndurance.user_servince.entity.PasswordResetTokenEntity;
@@ -58,6 +56,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
     RoleRepository roleRepository;
+
+	@Autowired
+	AddressRepository addressRepository;
 
 	@Autowired
     AuthorityRepository authorityRepo;
@@ -165,12 +166,39 @@ public class UserServiceImpl implements UserService {
 		return userDto;
 	}
 
+//	@Override
+//	public UserDto updateUser(String userId, UserDto user) {
+//		UserDto returnValue = new UserDto();
+//
+//		UserEntity userEntity = userRepository.findByUserId(userId);
+//
+//
+//		if (userEntity == null)
+//			throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+//
+//		userEntity.setFirstName(user.getFirstName());
+//		userEntity.setLastName(user.getLastName());
+//
+//		UserEntity updatedUserDetails = userRepository.save(userEntity);
+//		returnValue = new ModelMapper().map(updatedUserDetails, UserDto.class);
+//
+//		return returnValue;
+//	}
+
 	@Override
 	public UserDto updateUser(String userId, UserDto user) {
 		UserDto returnValue = new UserDto();
 
 		UserEntity userEntity = userRepository.findByUserId(userId);
-
+		if(!userEntity.getAddresses().isEmpty()){
+			AddressEntity addressEntity = userEntity.getAddresses().get(userEntity.getDefaultAddress());
+			AddressDTO addressDTO = user.getAddresses().get(0);
+			addressEntity.setCity(addressDTO.getCity());
+			addressEntity.setCountry(addressDTO.getCountry());
+			addressEntity.setStreetName(addressDTO.getStreetName());
+			addressEntity.setStreetName(addressDTO.getStreetName());
+			addressRepository.save(addressEntity);
+		}
 
 		if (userEntity == null)
 			throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());

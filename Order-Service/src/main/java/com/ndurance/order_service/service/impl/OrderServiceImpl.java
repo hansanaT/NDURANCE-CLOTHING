@@ -59,9 +59,7 @@ public class OrderServiceImpl implements OrderService {
         AtomicReference<Long> totalPrice = new AtomicReference<>(0L);
 
         products.forEach(p->{
-            System.out.println("Product ID: " + p);
             ProductDTO productRest = productClient.getProductById(p, token);
-            System.out.println("Product ID: " + productRest.getName());
             ProductEntity product = new ProductEntity();
             product.setProductId(productRest.getProductId());
             product.setName(productRest.getName());
@@ -69,6 +67,7 @@ public class OrderServiceImpl implements OrderService {
             product.setImages(productRest.getImages());
             product.setPrice(productRest.getPrice());
             product.setType(productRest.getType());
+            product.setQuantity(1);
 
             ProductEntity save = productRepository.save(product);
             productEntities.add(save);
