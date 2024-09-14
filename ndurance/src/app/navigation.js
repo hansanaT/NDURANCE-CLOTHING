@@ -103,10 +103,6 @@ const Navigation = () => {
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1"
                                       d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7H7.312"/>
                             </svg>
-                            <div id="cart-count"
-                                 className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white
-                            bg-[#155e75] border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">0
-                            </div>
                         </Button>
                     </div>
                     {isAuthenticated && (
@@ -122,9 +118,9 @@ const Navigation = () => {
                                 <span className="block truncate text-sm font-medium">{userDetails.firstName} {userDetails.lastName}</span>
                                 <span className="block text-sm">{userDetails.email}</span>
                             </Dropdown.Header>
-                            <Dropdown.Item>Dashboard</Dropdown.Item>
+                            <Dropdown.Item href={"/cart"} >Cart</Dropdown.Item>
                             {/* <Dropdown.Item>Settings</Dropdown.Item> */}
-                            <Dropdown.Item>Wishlist</Dropdown.Item>
+                            <Dropdown.Item href={"/orders"}>Orders</Dropdown.Item>
                             <DropdownItem href={"/user"}>User Profile</DropdownItem>
                             <Dropdown.Divider/>
                             <Dropdown.Item onClick={handleSignOut}>Sign out</Dropdown.Item>
