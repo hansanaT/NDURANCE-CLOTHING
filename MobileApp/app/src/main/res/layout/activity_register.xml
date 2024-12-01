@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -13,22 +12,46 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="Create New Account"
         android:textSize="24sp"
         android:textColor="#000000"
         android:fontFamily="sans-serif-medium" />
 
-    <!-- Username Field -->
+    <!-- First Name Field -->
     <EditText
-        android:id="@+id/etUsername"
+        android:id="@+id/etFirstName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Username"
+        android:hint="First Name"
         android:padding="8dp"
         android:background="@android:drawable/edit_text"
         android:textColorHint="#888888"
         android:textColor="#000000"
         android:layout_marginTop="16dp" />
+
+    <!-- Last Name Field -->
+    <EditText
+        android:id="@+id/etLastName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Last Name"
+        android:padding="8dp"
+        android:background="@android:drawable/edit_text"
+        android:textColorHint="#888888"
+        android:textColor="#000000"
+        android:layout_marginTop="8dp" />
+
+    <!-- Email Field -->
+    <EditText
+        android:id="@+id/etEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:padding="8dp"
+        android:background="@android:drawable/edit_text"
+        android:textColorHint="#888888"
+        android:textColor="#000000"
+        android:layout_marginTop="8dp" />
 
     <!-- Password Field -->
     <EditText
@@ -43,27 +66,15 @@
         android:textColor="#000000"
         android:layout_marginTop="8dp" />
 
-    <!-- Login Button -->
+    <!-- Register Button -->
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="Login"
+        android:text="Register"
         android:textColor="#FFFFFF"
         android:background="#6200EE"
         android:fontFamily="sans-serif-medium"
         android:layout_marginTop="16dp" />
-
-    <!-- Create New Account Link -->
-    <TextView
-        android:id="@+id/tvCreateAccount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create New Account"
-        android:textSize="14sp"
-        android:textColor="#6200EE"
-        android:layout_marginTop="16dp"
-        android:clickable="true"
-        android:focusable="true" />
 </LinearLayout>
