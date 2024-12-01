@@ -77,4 +77,15 @@
         android:background="#6200EE"
         android:fontFamily="sans-serif-medium"
         android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/tvLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:textSize="14sp"
+        android:textColor="#6200EE"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:focusable="true" />
 </LinearLayout>
