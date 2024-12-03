@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Outer Frame -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M3,2h18a1,1 0,0,1 1,1v18a1,1 0,0,1 -1,1H3a1,1 0,0,1 -1,-1V3a1,1 0,0,1 1,-1zM4,4v16h16V4H4z"/>
+
+    <!-- Checkbox 1 -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M6,6h3v3H6V6z"/>
+
+    <!-- Line 1 -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M10,7h8v1h-8z"/>
+
+    <!-- Checkbox 2 -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M6,11h3v3H6v-3z"/>
+
+    <!-- Line 2 -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M10,12h8v1h-8z"/>
+
+    <!-- Checkbox 3 -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M6,16h3v3H6v-3z"/>
+
+    <!-- Line 3 -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M10,17h8v1h-8z"/>
+</vector>

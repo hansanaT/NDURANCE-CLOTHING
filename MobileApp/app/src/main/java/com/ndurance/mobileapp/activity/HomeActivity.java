@@ -1,8 +1,10 @@
 package com.ndurance.mobileapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +28,8 @@ public class HomeActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private ProductAdapter adapter;
+    private ImageView carIcon, order_icon;
+    private ImageView profile_icon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,25 @@ public class HomeActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.product_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        carIcon = findViewById(R.id.cart_icon);
+        order_icon = findViewById(R.id.order_icon);
+        profile_icon = findViewById(R.id.profile_icon);
+
+        carIcon.setOnClickListener(view -> {
+            Intent intent = new Intent(HomeActivity.this, CartActivity.class);
+            startActivity(intent);
+        });
+
+        order_icon.setOnClickListener(view -> {
+            Intent intent = new Intent(HomeActivity.this, ActivityOrder.class);
+            startActivity(intent);
+        });
+
+        profile_icon.setOnClickListener(view -> {
+            Intent intent = new Intent(HomeActivity.this, UserActivity.class);
+            startActivity(intent);
+        });
 
         fetchProducts(0, 20);
     }

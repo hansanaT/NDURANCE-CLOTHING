@@ -301,7 +301,7 @@ const UserSettings = () => {
                                 id="city"
                                 className="border p-2 rounded"
                                 type="text"
-                                value={addressInfo.city}
+                                //value={addressInfo.city}
                                 onChange={handleAddressChange}
                                 required
                                 name="city"
@@ -315,7 +315,7 @@ const UserSettings = () => {
                                 id="country"
                                 className="border p-2 rounded"
                                 type="text"
-                                value={addressInfo.country}
+                                //value={addressInfo.country}
                                 onChange={handleAddressChange}
                                 required
                                 name="country"
@@ -329,7 +329,7 @@ const UserSettings = () => {
                                 id="streetName"
                                 className="border p-2 rounded"
                                 type="text"
-                                value={addressInfo.streetName}
+                                //value={addressInfo.streetName}
                                 onChange={handleAddressChange}
                                 required
                                 name="streetName"
@@ -343,7 +343,7 @@ const UserSettings = () => {
                                 id="postalCode"
                                 className="border p-2 rounded"
                                 type="text"
-                                value={addressInfo.postalCode}
+                                //value={addressInfo.postalCode}
                                 onChange={handleAddressChange}
                                 required
                                 name="postalCode"

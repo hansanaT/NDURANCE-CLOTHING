@@ -43,9 +43,9 @@
             android:contentDescription="Menu"
             android:layout_gravity="end" />
     </androidx.appcompat.widget.Toolbar>
-
     <!-- Main Content -->
     <ScrollView
+        android:id="@+id/mainContentScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/topBar"
@@ -59,7 +59,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Product Name -->
+            <!-- Product Details -->
             <TextView
                 android:id="@+id/productName"
                 android:layout_width="wrap_content"
@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:text="Category: NONE" />
 
-            <!-- Buttons -->
+            <!-- Action Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -119,33 +119,47 @@
                 android:layout_marginTop="16dp">
 
                 <Button
-                    android:id="@+id/btnUpdateProduct"
+                    android:id="@+id/btnOrder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Update Product" />
+                    android:text="Order" />
 
                 <Button
-                    android:id="@+id/btnDeleteProduct"
+                    android:id="@+id/btnCart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Delete Product"
-                    android:layout_marginStart="16dp"
-                    android:backgroundTint="@color/red" />
+                    android:text="Add to Cart"
+                    android:layout_marginStart="16dp" />
             </LinearLayout>
 
             <!-- Comments Section -->
             <TextView
+                android:id="@+id/commentsHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Comments"
-                android:textSize="16sp"
-                android:layout_marginTop="16dp" />
+                android:textSize="18sp"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold" />
 
+            <!-- Comments RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/commentsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+            <!-- Add Comment -->
             <EditText
                 android:id="@+id/commentInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Add a comment..." />
+                android:hint="Add a comment..."
+                android:layout_marginTop="16dp"
+                android:padding="8dp"
+                android:background="@android:color/white"
+                android:gravity="top|start"
+                android:minHeight="48dp" />
 
             <Button
                 android:id="@+id/btnSubmitComment"

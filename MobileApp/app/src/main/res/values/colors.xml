@@ -4,4 +4,11 @@
     <color name="white">#FFFFFFFF</color>
     <color name="lightGray">#D3D3D3</color> <!-- Light gray color -->
     <color name="red">#FF0000</color> <!-- Bright red color -->
+    <color name="primaryColor">#6200EE</color>
+    <color name="primaryLightColor">#BB86FC</color>
+    <color name="primaryDarkColor">#3700B3</color>
+    <color name="secondaryColor">#03DAC6</color>
+    <color name="backgroundColor">#FFFFFF</color>
+    <color name="green">#4CAF50</color>
+    <color name="blue">#1E88E5</color> <!-- This is a material design blue -->
 </resources>

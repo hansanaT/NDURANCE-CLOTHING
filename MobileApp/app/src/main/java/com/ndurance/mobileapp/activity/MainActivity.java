@@ -40,13 +40,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String userId = tokenManager.getUserId();
-        String jwtToken = tokenManager.getJwtToken();
+        String userId = null;
+        String jwtToken = null;
 
-        Log.d("%%%%%%%%%%%%%%%%%%% UserID *********", userId);
-        Log.d("@@@@@@@@@@@@@@@@@@@@@ Authorization ****** ", jwtToken);
+        userId = tokenManager.getUserId();
+        jwtToken = tokenManager.getJwtToken();
 
-        if((userId != null && jwtToken != null) || (!userId.isEmpty() && !jwtToken.isEmpty())){
+        if(userId != null || jwtToken != null){
             Intent intent = new Intent(MainActivity.this, HomeActivity.class);
             startActivity(intent);
         }
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         TextView tvCreateAccount = findViewById(R.id.tvCreateAccount);
         tvCreateAccount.setOnClickListener(v -> {
             // Navigate to RegisterActivity
-            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            Intent intent = new Intent(MainActivity.this, ActivityRegister.class);
             startActivity(intent);
         });
 
@@ -115,13 +115,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 String responseBody = response.body().string();
 
-                tokenManager.saveTokenAndUserId(response.header("UserID"), response.header("Authorization").split(" ")[1]);
-
-                String userId = tokenManager.getUserId();
-                String jwtToken = tokenManager.getJwtToken();
-
-                Log.d("£££££££££££££££££££££££££ UserID *********", userId);
-                Log.d("£££££££££££££££££££££££££ Authorization ****** ", jwtToken);
+                tokenManager.saveTokenAndUserId(response.header("UserID"), response.header("Authorization").split(" ")[1]);;
 
                 runOnUiThread(() -> {
                     if (response.isSuccessful()) {
