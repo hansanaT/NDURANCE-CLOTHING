@@ -5,7 +5,7 @@ import com.ndurance.order_service.entity.OrderEntity;
 import com.ndurance.order_service.entity.ProductEntity;
 import com.ndurance.order_service.feign_client.ProductClient;
 import com.ndurance.order_service.feign_client.UserClient;
-import com.ndurance.order_service.feign_client.model.ProductRest;
+import com.ndurance.order_service.feign_client.model.OrderRequestModelC;
 import com.ndurance.order_service.feign_client.model.UserRest;
 import com.ndurance.order_service.repository.AddressRepository;
 import com.ndurance.order_service.repository.OrderRepository;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -39,48 +39,56 @@ public class OrderServiceImpl implements OrderService {
     private ProductClient productClient;
     @Autowired
     private AddressRepository addressRepository;
-
     @Autowired
     private ProductRepository productRepository;
 
     @Override
     @Transactional
-    public void saveOrder(OrderRequestModel orderRequestModel, boolean addressSame, String token) {
+    public void saveOrder(OrderRequestModel orderRequestModel, boolean changeAddress ,boolean addressSame, String token) {
         OrderEntity order = new OrderEntity();
 
+        // Set basic order details
         order.setOrderId(utils.generateAddressId(20));
         order.setOrderDate(new Date());
         order.setUser(orderRequestModel.getUser());
 
-        Set<String> products = orderRequestModel.getProducts().keySet();
+        // Prepare products and calculate total price
+        Set<String> productIds = orderRequestModel.getProducts().keySet();
         List<ProductEntity> productEntities = new ArrayList<>();
+        AtomicLong totalPrice = new AtomicLong(0);
 
+        productIds.forEach(productId -> {
+        	System.out.println("Product ID: " + productId);
+        	
+            ProductDTO productRest = productClient.getProductById(productId);
+            System.out.println("Product ID: " + productRest.getProductId() + ", Price: " + productRest.getPrice() + ", Quantity: " + 1);
+            // Retrieve the quantity from the request
 
-        AtomicReference<Long> totalPrice = new AtomicReference<>(0L);
-
-        products.forEach(p->{
-            ProductDTO productRest = productClient.getProductById(p, token);
             ProductEntity product = new ProductEntity();
             product.setProductId(productRest.getProductId());
             product.setName(productRest.getName());
-            product.setName(productRest.getDescription());
+            product.setDescription(productRest.getDescription());
             product.setImages(productRest.getImages());
             product.setPrice(productRest.getPrice());
             product.setType(productRest.getType());
             product.setQuantity(1);
 
-            ProductEntity save = productRepository.save(product);
-            productEntities.add(save);
-            totalPrice.set(  ((long) ((long) save.getPrice() * save.getQuantity())) + totalPrice.get());
+            // Save product entity and add to the order's product list
+            ProductEntity savedProduct = productRepository.save(product);
+            productEntities.add(savedProduct);
 
+            // Accumulate total price
+            totalPrice.addAndGet(savedProduct.getPrice() * savedProduct.getQuantity());
         });
 
         order.setTotalPrice(totalPrice.get());
+        System.out.print(" ============================== -  ****************** " + totalPrice.get());
         order.setProducts(productEntities);
 
+        // Fetch user details and handle address
         UserRest userRest = userClient.getCustomerById(orderRequestModel.getUser(), token);
 
-        if (addressSame) {
+        if (changeAddress && addressSame) {
             if (userRest.getAddresses() != null && !userRest.getAddresses().isEmpty()) {
                 AddressesModel model = userRest.getAddresses().get(0);
 
@@ -93,42 +101,39 @@ public class OrderServiceImpl implements OrderService {
                 address.setOrder(order);
 
                 addressRepository.save(address);
+
                 order.setShippingAddress(address);
                 order.setBillingAddress(address);
             } else {
                 throw new RuntimeException("No address found for the user.");
             }
-        } else {
+        } else if (changeAddress){
+            AddressesModel billingAddressModel = userRest.getAddresses().get(0);
+            AddressesModel shippingAddressModel = userRest.getAddresses().get(1);
 
-            AddressesModel billing_addresses_req = orderRequestModel.getBillingAddresses();
-            AddressEntity billing_address = new AddressEntity();
+            AddressEntity billingAddress = new AddressEntity();
+            billingAddress.setAddressId(utils.generateAddressId(20));
+            billingAddress.setCity(billingAddressModel.getCity());
+            billingAddress.setCountry(billingAddressModel.getCountry());
+            billingAddress.setStreetName(billingAddressModel.getStreetName());
+            billingAddress.setPostalCode(billingAddressModel.getPostalCode());
+            billingAddress.setOrder(order);
 
-            billing_address.setAddressId(utils.generateUserId(10));
-            billing_address.setCity(billing_addresses_req.getCity());
-            billing_address.setCountry(billing_addresses_req.getCountry());
-            billing_address.setStreetName(billing_address.getStreetName());
-            billing_address.setPostalCode(billing_address.getPostalCode());
-            billing_address.setOrder(order);
+            AddressEntity shippingAddress = new AddressEntity();
+            shippingAddress.setAddressId(utils.generateAddressId(20));
+            shippingAddress.setCity(shippingAddressModel.getCity());
+            shippingAddress.setCountry(shippingAddressModel.getCountry());
+            shippingAddress.setStreetName(shippingAddressModel.getStreetName());
+            shippingAddress.setPostalCode(shippingAddressModel.getPostalCode());
+            shippingAddress.setOrder(order);
 
-            addressRepository.save(billing_address);
-            order.setBillingAddress(billing_address);
+            AddressEntity biilingAddressEntity = addressRepository.save(billingAddress);
+            AddressEntity shipingAddressEntity = addressRepository.save(shippingAddress);
 
-            AddressEntity shipping_address = new AddressEntity();
-            AddressesModel shipping_address_req = orderRequestModel.getShippingAddress();
+            order.setShippingAddress(biilingAddressEntity);
+            order.setBillingAddress(shipingAddressEntity);
 
-            shipping_address.setAddressId(utils.generateUserId(10));
-            shipping_address.setCity(shipping_address_req.getCity());
-            shipping_address.setCountry(shipping_address_req.getCountry());
-            shipping_address.setStreetName(shipping_address_req.getStreetName());
-            shipping_address.setPostalCode(shipping_address_req.getPostalCode());
-            billing_address.setOrder(order);
-
-            addressRepository.save(shipping_address);
-
-            order.setShippingAddress(shipping_address);
         }
-
-
         order.setRefund(false);
         order.setDelivered(false);
 
@@ -147,6 +152,67 @@ public class OrderServiceImpl implements OrderService {
             orderRests.add(modelMapper.map(order, OrderRest.class));
         });
         return orderRests;
+    }
+
+	@Override
+    public void saveOrder(OrderRequestModelC orderRequestModel, String token, String user) {
+        OrderEntity order = new OrderEntity();
+        order.setOrderId(utils.generateAddressId(20));
+        order.setOrderDate(new Date());
+        order.setUser(user);
+        order.setRefund(false);
+        order.setDelivered(false);
+
+        AtomicLong totalPrice = new AtomicLong(0);
+        List<ProductEntity> productEntities = new ArrayList<>();
+
+        OrderEntity orderEntity = orderRepository.save(order);
+
+        UserRest userRest = userClient.getCustomerById(user, token);
+        AddressEntity address = null;
+
+        if (userRest.getAddresses() != null && !userRest.getAddresses().isEmpty()) {
+            AddressesModel model = userRest.getAddresses().get(0);
+
+            address = new AddressEntity();
+            address.setAddressId(utils.generateAddressId(20));
+            address.setCity(model.getCity());
+            address.setCountry(model.getCountry());
+            address.setStreetName(model.getStreetName());
+            address.setPostalCode(model.getPostalCode());
+            address.setOrder(order);
+
+            addressRepository.save(address);
+
+            order.setShippingAddress(address);
+            order.setBillingAddress(address);
+        } else {
+            throw new RuntimeException("No address found for the user.");
+        }
+
+        // Process cart items
+        orderRequestModel.getCart().forEach(cart -> {
+            ProductDTO productRest = productClient.getProductById(cart.getProductId());
+
+            ProductEntity product = new ProductEntity();
+            product.setProductId(productRest.getProductId());
+            product.setName(productRest.getName());
+            product.setDescription(productRest.getDescription());
+            product.setImages(productRest.getImages());
+            product.setPrice(productRest.getPrice());
+            product.setType(productRest.getType());
+            product.setQuantity(cart.getQuantity());
+            product.setOrder(orderEntity);
+
+            ProductEntity savedProduct = productRepository.save(product);
+            productEntities.add(savedProduct);
+
+            totalPrice.addAndGet((long) savedProduct.getPrice() * savedProduct.getQuantity());
+        });
+
+        // Update the order with products and total price
+        order.setProducts(productEntities);
+        orderRepository.save(order);
     }
 }
 

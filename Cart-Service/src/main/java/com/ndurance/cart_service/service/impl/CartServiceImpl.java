@@ -8,7 +8,7 @@ import com.ndurance.cart_service.service.CartService;
 import com.ndurance.cart_service.shared.Utils;
 import com.ndurance.cart_service.shared.dto.CartDTO;
 import com.ndurance.cart_service.shared.model.request.CartRequestModel;
-import com.ndurance.cart_service.shared.model.request.OrderRequestModel;
+import com.ndurance.cart_service.shared.model.request.OrderRequestModelC;
 import com.ndurance.cart_service.shared.model.response.ErrorMessages;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,16 +35,22 @@ public class CartServiceImpl implements CartService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        CartEntity cartEntity = new CartEntity();
-        cartEntity.setProductId(requestModel.getProductId());
-        cartEntity.setPrice(requestModel.getPrice());
-        cartEntity.setQuantity(requestModel.getQuantity());
-        cartEntity.setName(requestModel.getName());
-        cartEntity.setImages(requestModel.getImages());
+        CartEntity alreadyInCart = cartRepository.findByProductId(requestModel.getProductId());
+        if(alreadyInCart != null){
+            alreadyInCart.setQuantity( alreadyInCart.getQuantity() + 1);
+            cartRepository.save(alreadyInCart);
+        }else{
+            CartEntity cartEntity = new CartEntity();
+            cartEntity.setProductId(requestModel.getProductId());
+            cartEntity.setPrice(requestModel.getPrice());
+            cartEntity.setQuantity(requestModel.getQuantity());
+            cartEntity.setName(requestModel.getName());
+            cartEntity.setImages(requestModel.getImages());
 
-        cartEntity.setUser(username);
-        cartEntity.setCartId(utils.generateAddressId(20));
-        cartRepository.save(cartEntity);
+            cartEntity.setUser(username);
+            cartEntity.setCartId(utils.generateAddressId(20));
+            cartRepository.save(cartEntity);
+        }
     }
 
     @Override
@@ -74,7 +80,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public void checkout(String userId, String token, boolean addressSame) {
         List<CartEntity> cart = cartRepository.findByUser(userId);
-        OrderRequestModel orderRequestModel = new OrderRequestModel();
+        OrderRequestModelC orderRequestModel = new OrderRequestModelC();
         orderRequestModel.setCart(cart);
 
         orderClient.checkOut(token, userId, orderRequestModel);

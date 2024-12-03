@@ -8,6 +8,14 @@ import java.util.List;
 
 @Getter
 @Setter
-public class OrderRequestModel {
+public class OrderRequestModelC {
     private List<CartEntity> cart;
+
+    public List<CartEntity> getCart() {
+        return cart;
+    }
+
+    public void setCart(List<CartEntity> cart) {
+        this.cart = cart;
+    }
 }

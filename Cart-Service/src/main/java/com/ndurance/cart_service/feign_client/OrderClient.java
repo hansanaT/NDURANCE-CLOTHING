@@ -1,6 +1,6 @@
 package com.ndurance.cart_service.feign_client;
 
-import com.ndurance.cart_service.shared.model.request.OrderRequestModel;
+import com.ndurance.cart_service.shared.model.request.OrderRequestModelC;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -15,5 +15,5 @@ public interface OrderClient {
     @PostMapping("/orders/cart/checkOut/{userId}")
     @Retry(name="order-service")
     @CircuitBreaker(name="order-service")
-    String checkOut(@RequestHeader(value = "Authorization") String authorizationHeader, @PathVariable String userId, @RequestBody OrderRequestModel orderRequestModel);
+    String checkOut(@RequestHeader(value = "Authorization") String authorizationHeader, @PathVariable String userId, @RequestBody OrderRequestModelC orderRequestModel);
 }

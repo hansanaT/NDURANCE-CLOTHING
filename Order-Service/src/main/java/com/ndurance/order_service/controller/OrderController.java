@@ -7,6 +7,8 @@ import com.ndurance.order_service.service.OrderService;
 import com.ndurance.order_service.shared.model.request.OrderRequestModel;
 import com.ndurance.order_service.shared.model.response.ErrorMessages;
 import com.ndurance.order_service.shared.model.response.OrderRest;
+import com.ndurance.order_service.shared.model.response.beta.OrderResponse;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,10 +21,19 @@ import java.util.*;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+    private final ModelMapper modelMapper = new ModelMapper();
 
     @PostMapping
-    public void saveOrder(@RequestBody OrderRequestModel orderRequestModel, @RequestHeader(value = "Authorization") String authorizationHeader, @RequestParam(name = "addressSame") boolean addressSame){
-        orderService.saveOrder(orderRequestModel, addressSame ,authorizationHeader);
+    public void saveOrder(@RequestBody OrderRequestModel orderRequestModel, @RequestHeader(value = "Authorization") String authorizationHeader, 
+    		@RequestParam(name = "changeAddress")boolean changeAddress, @RequestParam(name = "addressSame") boolean addressSame){
+    	
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    	String username = authentication.getName();
+        if(!Objects.equals(username, orderRequestModel.getUser()))
+            throw new OrderServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
+        
+        orderService.saveOrder(orderRequestModel,changeAddress, addressSame ,authorizationHeader);
     }
 
     @GetMapping("/{userId}/{orderId}")
@@ -42,22 +53,42 @@ public class OrderController {
         return orderService.getOrders(username);
     }
 
-    @PostMapping("/cart/checkOut/{userId}")
-    public String checkOut(@PathVariable String userId, @RequestBody OrderRequestModelC requestModelC, @RequestHeader(value = "Authorization") String authorizationHeader){
-        OrderRequestModel requestModel = new OrderRequestModel();
+    @GetMapping("/{userId}")
+    public List<OrderResponse> getAllOrders(@PathVariable String userId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
-        List<CartModel> cart = requestModelC.getCart();
-        Map<String, Integer> products = new HashMap<>();
+//        System.out.println(username);
+        System.out.println(userId);
 
-        cart.forEach(c->{
-            products.put(c.getProductId(), c.getPrice());
+//        if(!Objects.equals(username, userId))
+//            throw new OrderServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
+
+        List<OrderRest> orders = orderService.getOrders(userId);
+        List<OrderResponse> ordersRes = new ArrayList<>();
+
+        orders.forEach(order->{
+            OrderResponse orderResponse = new OrderResponse(order.getOrderId(), order.getOrderDate().toString(), order.getPrice());
+            ordersRes.add(orderResponse);
         });
 
-        requestModel.setProducts(products);
-        requestModel.setUser(userId);
+        ordersRes.forEach(order->{
+            System.out.println("FUCK YOU ------------ " + order.getId());
+        });
 
-        orderService.saveOrder(requestModel, true ,authorizationHeader);
+        return ordersRes;
+    }
 
-        return "String";
+    @PostMapping("/cart/checkOut/{userId}")
+    public String checkOut(@PathVariable String userId, @RequestBody OrderRequestModelC requestModelC, @RequestHeader(value = "Authorization") String authorizationHeader){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    	String username = authentication.getName();
+        if(!Objects.equals(username, userId))
+            throw new OrderServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
+        
+       orderService.saveOrder(requestModelC,authorizationHeader, userId);
+
+       return "String";
     }
 }

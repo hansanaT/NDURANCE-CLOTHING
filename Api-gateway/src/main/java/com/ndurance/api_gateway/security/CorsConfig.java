@@ -12,7 +12,13 @@ public class CorsConfig {
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.addAllowedOrigin("https://localhost:3000");
+
+        corsConfig.addAllowedOrigin("https://localhost");  // Web frontend
+        corsConfig.addAllowedOrigin("http://localhost");  // Web frontend
+        corsConfig.addAllowedOrigin("http://10.0.2.2");        // Android Emulator
+        corsConfig.addAllowedOrigin("http://192.168.1.8");     // Local network (Android devices)
+        corsConfig.addAllowedOriginPattern("*");              // Allow all for development
+
         corsConfig.addAllowedMethod("*");
         corsConfig.addAllowedHeader("*");
         corsConfig.setAllowCredentials(true);

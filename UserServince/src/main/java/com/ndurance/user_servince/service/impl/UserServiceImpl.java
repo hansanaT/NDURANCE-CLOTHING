@@ -186,13 +186,27 @@ public class UserServiceImpl implements UserService {
 //	}
 
 	@Override
-	public UserDto updateUser(String userId, UserDto user) {
-		UserDto returnValue = new UserDto();
-
+	public UserDto updateUser(String userId, UserDto userDto) {
 		UserEntity userEntity = userRepository.findByUserId(userId);
+
+		if (userEntity == null) {
+			throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+		}
+		if (userDto.getFirstName() != null && !userDto.getFirstName().trim().isEmpty()) {
+			userEntity.setFirstName(userDto.getFirstName());
+		}
+
+		if (userDto.getLastName() != null && !userDto.getLastName().trim().isEmpty()) {
+			userEntity.setLastName(userDto.getLastName());
+		}
+
+		if (userDto.getEmail() != null && !userDto.getEmail().trim().isEmpty()) {
+			userEntity.setEmail(userDto.getEmail());
+		}
+
 		if(!userEntity.getAddresses().isEmpty()){
 			AddressEntity addressEntity = userEntity.getAddresses().get(userEntity.getDefaultAddress());
-			AddressDTO addressDTO = user.getAddresses().get(0);
+			AddressDTO addressDTO = userDto.getAddresses().get(0);
 			addressEntity.setCity(addressDTO.getCity());
 			addressEntity.setCountry(addressDTO.getCountry());
 			addressEntity.setStreetName(addressDTO.getStreetName());
@@ -200,16 +214,37 @@ public class UserServiceImpl implements UserService {
 			addressRepository.save(addressEntity);
 		}
 
-		if (userEntity == null)
-			throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 
-		userEntity.setFirstName(user.getFirstName());
-		userEntity.setLastName(user.getLastName());
+		// Handle addresses update
+		if (userDto.getAddresses() != null && !userDto.getAddresses().isEmpty()) {
+			List<AddressEntity> updatedAddresses = new ArrayList<>();
+			for (AddressDTO addressDTO : userDto.getAddresses()) {
+				AddressEntity addressEntity = addressRepository.findByAddressId(addressDTO.getAddressId());
 
-		UserEntity updatedUserDetails = userRepository.save(userEntity);
-		returnValue = new ModelMapper().map(updatedUserDetails, UserDto.class);
+				if (addressEntity == null) {
+					// Create a new address if it doesn't exist
+					addressEntity = new AddressEntity();
+					addressEntity.setAddressId(utils.generateAddressId(30));
+					addressEntity.setUserDetails(userEntity); // Link the address to the user
+				}
 
-		return returnValue;
+				// Update address details
+				addressEntity.setCity(addressDTO.getCity());
+				addressEntity.setCountry(addressDTO.getCountry());
+				addressEntity.setStreetName(addressDTO.getStreetName());
+				addressEntity.setPostalCode(addressDTO.getPostalCode());
+
+				updatedAddresses.add(addressEntity);
+			}
+
+			// Set the updated addresses to the user
+			userEntity.setAddresses(updatedAddresses);
+		}
+		// Save the updated user entity
+		UserEntity updatedUserEntity = userRepository.save(userEntity);
+
+		// Return the updated user as a DTO
+		return new ModelMapper().map(updatedUserEntity, UserDto.class);
 	}
 
 	@Transactional

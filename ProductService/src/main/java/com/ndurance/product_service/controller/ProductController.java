@@ -52,7 +52,7 @@ public class ProductController {
         productService.saveComment(requestModel, userid, authorizationHeader);
     }
 
-    @GetMapping("/comments/{productId}")
+    @GetMapping("/{productId}/comments")
     public List<CommentDTO> commentDTOS(@PathVariable String productId){
         return productService.getComments(productId);
     }
@@ -118,7 +118,13 @@ public class ProductController {
 
     @GetMapping("/{productId}")
     public ProductDTO getProduct(@PathVariable String productId){
-        System.out.println("Product ID: " + productId);
+        System.out.println("Product ID ---------------------------------- : " + productId);
+        return productService.getProduct(productId);
+    }
+
+    @GetMapping("/product/{productId}")
+    public ProductDTO getProduct2(@PathVariable String productId){
+        System.out.println("Product ID ---------------------------------- : " + productId);
         return productService.getProduct(productId);
     }
 

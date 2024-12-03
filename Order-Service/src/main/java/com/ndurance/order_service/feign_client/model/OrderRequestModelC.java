@@ -9,4 +9,12 @@ import java.util.List;
 @Setter
 public class OrderRequestModelC {
     private List<CartModel> cart;
+
+    public List<CartModel> getCart() {
+        return cart;
+    }
+
+    public void setCart(List<CartModel> cart) {
+        this.cart = cart;
+    }
 }

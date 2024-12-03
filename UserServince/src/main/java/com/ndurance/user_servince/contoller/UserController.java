@@ -1,5 +1,6 @@
 package com.ndurance.user_servince.contoller;
 
+import com.ndurance.user_servince.exceptions.UserServiceException;
 import com.ndurance.user_servince.exceptions.UserUnAuthorizedServiceException;
 import com.ndurance.user_servince.shared.model.request.UserDetailsRequestModel;
 import com.ndurance.user_servince.shared.model.request.UserPasswordReset;
@@ -164,8 +165,12 @@ public class UserController {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
+
 		if(!Objects.equals(username, userId))
 			throw new UserUnAuthorizedServiceException(ErrorMessages.AUTHENTICATION_FAILED.getErrorMessage());
+
+		if(!userPasswordReset.getNewPassword().equals(userPasswordReset.getNewPassword()))
+			throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 
 		userService.resetPassWord(userPasswordReset);
 	}
